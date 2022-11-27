@@ -1,10 +1,17 @@
 #lint.py 
 import sys 
+import os
 from pylint import lint  
 
 THRESHOLD = 7
 
-run = lint.Run(["sorting_battle_gym/relu.py"], do_exit=False) 
+test_files = os.listdir('sorting_battle_gym')
+# get every .py file
+test_files = [file for file in test_files if file.endswith('.py') and not file.startswith('__init__')]
+# add the path to the files
+test_files = [os.path.join('sorting_battle_gym', file) for file in test_files]
+
+run = lint.Run(test_files, do_exit=False) 
 score = run.linter.stats.global_note
 
 if score < THRESHOLD: 

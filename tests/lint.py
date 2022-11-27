@@ -2,9 +2,9 @@
 import sys 
 from pylint import lint  
 
-THRESHOLD = 8
+THRESHOLD = 5
 
-run = lint.Run(["src/relu.py"], do_exit=False) 
+run = lint.Run(["sorting_battle_gym/relu.py"], do_exit=False) 
 score = run.linter.stats.global_note
 
 if score < THRESHOLD: 

@@ -5,7 +5,7 @@ from pylint import lint
 THRESHOLD = 8
 
 run = lint.Run(["src/relu.py"], do_exit=False) 
-score = run.linter.stats["global_note"]
+score = run.linter.stats.global_note
 
 if score < THRESHOLD: 
     print("Linter failed: Score:", score) 

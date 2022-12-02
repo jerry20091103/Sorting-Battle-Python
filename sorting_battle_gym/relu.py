@@ -1,5 +1,6 @@
 # relu.py
 # this is a simpe code to test GitHub CI flow
+# test
 
 def relu(input_x):
     '''

@@ -49,8 +49,8 @@
 - void LoadGrid(list gridValues) # gridValues is a 2D-list
 - void PullDown(int column)
 - void Swap(tuple coord1, tuple coord2)
-- void SwapAndPullDown()
-- void PushUp()
+- void SwapAndPullDown(tuple coord1, tuple coord2)
+- bool PushUp(int column, int number) # returns whether the grid has overflowed
 - void RemoveTiles(list[tuple] coords)
 - bool ContentEqual(GameGridState other)
 

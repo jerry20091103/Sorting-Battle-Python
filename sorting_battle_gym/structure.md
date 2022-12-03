@@ -35,16 +35,18 @@
     - 2D-list of GameTileState
 ### method
 - GameGridState(int rowCount, int columnCount) # initialize to -1 (Empty)
-- void InplaceCopy(GameGridState from)
+- copy(other) # copy constructor (classmethod!)
+- void InplaceCopy(GameGridState other)
 - int Get(tuple coord)
 - void Set(tuple coord, int value)
 - bool IsEmpty(tuple coord)
 - bool IsGarbage(tuple coord)
 - bool IsNumber(tuple coord)
 - void Clear() # flush to -1
-- void LoadRandom(int minInclusive, int maxInclusive)
+- void LoadRandom(int minInclusive, int maxExclusive)
 - void LoadRow(int rowId, list rowValues)
 - void LoadColumn(int columnId, list columnValues)
+- void LoadGrid(list gridValues) # gridValues is a 2D-list
 - void PullDown(int column)
 - void Swap(tuple coord1, tuple coord2)
 - void SwapAndPullDown()

@@ -10,7 +10,7 @@
 - Unit tests are done using pytest.
 - To add new tests, add a .py file in the "tests" folder, make sure to name it `test_<module name>.py`.
 - the class name should be `Test<module name>`.
-- the test functions should be named `test_<function name>_case<X>`. (X is the test case number, starting from 1. If there is only one test case, you can omit the `_case<X>`)
+- the test functions should be named `test_<test name>_case<X>`. (X is the test case number, starting from 1. If there is only one test case, you can omit the `_case<X>`)
 - use `assert` to check the output of the function.
 - To run the tests locally, run `python -m pytest` from the root of the project.
     - You need to have pytest installed for this to work. (use `pip install pytest`)

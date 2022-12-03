@@ -1,6 +1,6 @@
 from sorting_battle_gym.GameGridState import GameGridState
 
-class TestGameGridState:
+class TestGameGridStatePullDown:
     def test_PullDown_case1(self):
         '''
         Test the PullDown method of GameGridState.

@@ -2,9 +2,9 @@ class GameGridState:
     '''
     The is currently a empty class to fool the testbench.
     '''
-    def __init__(self, rowCount, columnCount):
+    def __init__(self, row_count, column_count):
         '''
-        Constructor with rowCount and columnCount.
+        Constructor with row_count and column_count.
         '''
         pass
 
@@ -15,67 +15,67 @@ class GameGridState:
         '''
         pass
 
-    def InplaceCopy(self, other):
+    def inplace_copy(self, other):
         '''
         Inplace copy from other.
         '''
         pass
 
-    def Get(self, coord):
+    def get(self, coord):
         '''
         Get the value at (row, column).
         '''
         return 0
-    
-    def Set(self, coord, value):
+
+    def set(self, coord, value):
         '''
         Set the value at (row, column).
         '''
         pass
 
-    def IsEmpty(self, coord):
+    def is_empty(self, coord):
         '''
         Check if the cell is empty.
         '''
         return True
-    
-    def IsGarbage(self, coord):
+
+    def is_garbage(self, coord):
         '''
         Check if the cell is garbage.
         '''
         return True
 
-    def IsNumber(self, coord):
+    def is_number(self, coord):
         '''
         Check if the cell is a number.
         '''
         return True
-    
-    def Clear(self):
+
+    def clear(self):
         '''
         Clear the while grid to -1.
         '''
         pass
 
-    def LoadRandom(self, minInclusive=0, maxExclusive=100):
+    def load_random(self, min_inclusive=0, max_exclusive=100):
         '''
         Load random numbers to the grid.
         '''
         pass
 
-    def LoadRow(self, rowId, rowValues):
+    def load_row(self, row_id, row_values):
         '''
         Load numbers to the row.
         '''
         pass
 
-    def LoadColumn(self, columnId, columnValues):
+    def load_column(self, column_id, column_values):
         '''
         Load numbers to the column.
         '''
         pass
 
-    def LoadGrid(self, gridValues):
+    def load_grid(self, grid_values):
         '''
         Load numbers to the grid.
         '''

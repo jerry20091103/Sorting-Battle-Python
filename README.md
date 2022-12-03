@@ -9,3 +9,4 @@ The Python repo for Sorting Battle the game.
 ## Contributing
 - The `main` branch is protected, so you need use the `dev` branch or create a new branch, and make a pull request to merge it.
 - The pull request will be tested automatically. If it passes all the tests, you may merge it.
+- for python naming convention, please refer to https://realpython.com/python-pep8/#naming-styles.

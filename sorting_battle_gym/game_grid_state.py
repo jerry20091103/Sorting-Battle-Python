@@ -1,6 +1,7 @@
 class GameGridState:
     '''
     The is currently a empty class to fool the testbench.
+    The contents are not guaranteed to be correct.
     '''
     def __init__(self, row_count, column_count):
         '''
@@ -80,4 +81,41 @@ class GameGridState:
         Load numbers to the grid.
         '''
         pass
+
+    def pull_down(self, column):
+        '''
+        Pull down the column.
+        '''
+        pass
+
+    def swap(self, coord1, coord2):
+        '''
+        Swap the value of two tiles.
+        '''
+        pass
+
+    def swap_and_pull_down(self, coord1, coord2):
+        '''
+        Swap the value of two tiles and pull down.
+        '''
+        pass
+
+    def push_up(self, column, number):
+        '''
+        Push up the column with number.
+        Returns whether the column has overflowed.
+        '''
+        return False
+
+    def remove_tiles(self, tiles):
+        '''
+        Remove the tiles from the grid.
+        '''
+        pass
+
+    def content_equal(self, other):
+        '''
+        Check if the content of two grids are equal.
+        '''
+        return True
     

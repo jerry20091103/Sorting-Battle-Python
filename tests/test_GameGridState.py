@@ -91,10 +91,13 @@ class TestGameGridState:
         state = GameGridState(3, 3)
         state.load_random()
         for i in range(3):
-            p1 = (x1[i], y1[i])
-            p2 = (x2[i], y2[i])
-            val1 = state.get(p1)
-            val2 = state.get(p2)
-            state.swap(p1, p2)
-            assert state.get(p1) == val2
-            assert state.get(p2) == val1
+            for j in range(3):
+                for k in range(3):
+                    for l in range(3):
+                        p1 = (x1[i], y1[j])
+                        p2 = (x2[k], y2[l])
+                        val1 = state.get(p1)
+                        val2 = state.get(p2)
+                        state.swap(p1, p2)
+                        assert state.get(p1) == val2
+                        assert state.get(p2) == val1

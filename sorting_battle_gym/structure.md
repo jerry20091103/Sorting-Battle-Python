@@ -2,82 +2,82 @@
 ### var
 - dict config {
     - int seed
-    - int rowCount, columnCount
-    - int minimumSortedLength
-    - int baseRemoveScore
-    - int maxEffectiveCombo
-    - float comboScoreStep
+    - int row_count, column_count
+    - int minimum_sorted_length
+    - int base_remove_score
+    - int max_effective_combo
+    - float combo_score_step
 }
-- GameGridState gameGridState
-- np.randomInstance
-- GameControllerState gameControllerState
-- GameScoreState gameScoreState
+- GameGridState game_grid_state
+- np.random_instance
+- GameControllerState game_controller_state
+- GameScoreState game_score_state
 ### method
 - GameBoardState(dict config)
 
 ## GameTileState
 ### const
-- Empty = -1
-- Garbage = -2
+- EMPTY = -1
+- GARBAGE = -2
 ### var
 - number
 ### method
-- GameTileState(int val = Empty)
-- IsEmpty()
-- IsGarbage()
-- IsNumber()
+- GameTileState(int val = EMPTY)
+- is_empty()
+- is_garbage()
+- is_number()
 
 ## GameGridState
 ### var
-- rowCount
-- columnCount
+- row_count
+- column_count
 - grid
     - 2D-list of GameTileState
 ### method
-- GameGridState(int rowCount, int columnCount) # initialize to -1 (Empty)
+- GameGridState(int row_count, int column_count) # initialize to -1 (Empty)
 - copy(other) # copy constructor (classmethod!)
-- void InplaceCopy(GameGridState other)
-- int Get(tuple coord)
-- void Set(tuple coord, int value)
-- bool IsEmpty(tuple coord)
-- bool IsGarbage(tuple coord)
-- bool IsNumber(tuple coord)
-- void Clear() # flush to -1
-- void LoadRandom(int minInclusive, int maxExclusive)
-- void LoadRow(int rowId, list rowValues)
-- void LoadColumn(int columnId, list columnValues)
-- void LoadGrid(list gridValues) # gridValues is a 2D-list
-- void PullDown(int column)
-- void Swap(tuple coord1, tuple coord2)
-- void SwapAndPullDown(tuple coord1, tuple coord2)
-- bool PushUp(int column, int number) # returns whether the grid has overflowed
-- void RemoveTiles(list[tuple] coords)
-- bool ContentEqual(GameGridState other)
+- void inplace_copy(GameGridState other)
+- int get(tuple coord)
+- void set(tuple coord, int value)
+- bool is_empty(tuple coord)
+- bool is_garbage(tuple coord)
+- bool is_number(tuple coord)
+- void clear() # flush to -1
+- void load_random(int min_inclusive, int max_exclusive)
+- void load_row(int row_id, list row_values)
+- void load_column(int column_id, list column_values)
+- void load_grid(list grid_values) # gridValues is a 2D-list
+- void pull_down(int column)
+- void swap(tuple coord1, tuple coord2)
+- void swap_and_pull_down(tuple coord1, tuple coord2)
+- bool push_up(int column, int number) # returns whether the grid has overflowed
+- void remove_tiles(list[tuple] coords)
+- bool content_equal(GameGridState other)
 
 ## GameControllerState
 ### var
-- GameGridState gameGridState (from gameBoardState)
-- GameScoreState gameScoreState (from gameBoardState)
-- int minimumSortedLength
+- GameGridState game_grid_state (from gameBoardState)
+- GameScoreState game_score_state (from gameBoardState)
+- int minimum_sorted_length
 - SelectHandler selecter
 - SwapHandler swaper
 ### method
-- GameControllerState(GameGridState gameGridState, GameScoreState gameScoreState, int minimumSortedLength)
-- int Select(list[tuple]) # call selector, and send result to gameScoreState
-- bool Swap(list[tuple])
+- GameControllerState(GameGridState game_grid_state, GameScoreState game_score_state, int minimum_sorted_length)
+- int select(list[tuple]) # call selector, and send result to gameScoreState
+- bool swap(list[tuple])
 
 ## SelectHandler
 ## SwapHandler
 
 ## GameScoreState
 ### var
-- int totalScore
+- int total_score
 - int combo
-- int comboScoreBuffer
+- int combo_score_buffer
 - dict config {
-    int minimumRemoveCount, baseRemoveScore, maxEffectiveCombo, RemoveLengthBonus
-    float comboScoreStep
+    int minimum_remove_count, base_remove_score, max_effective_combo, remove_length_bonus
+    float combo_score_step
 }
 ### method
 - GameScoreState(dict config)
-- void OnRemove(int removeCount)
+- void on_remove(int remove_count)

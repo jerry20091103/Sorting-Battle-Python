@@ -16,7 +16,7 @@ class TestGameControllerState:
         grid_state.load_grid(input_case)
         score_state = GameScoreState()  # todo: add config to pass in
         controller_state = GameControllerState(grid_state, score_state, 3)
-        controller_state.swap([(4, 3), (4, 2)])
+        controller_state.swap([(4, 3), (4, 2)]) # todo: swap() api has changed.
         answer = [[-1, -1,  2, -1, -1],
                   [-1, -1,  6,  4, -1],
                   [-1,  1, 54,  7, -1],

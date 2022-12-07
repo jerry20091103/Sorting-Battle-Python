@@ -1,3 +1,19 @@
+## GameState
+### var
+- dict config {
+    - maybe some game mode and settings here
+}
+- GameBoardStatse game_board_state
+### method
+#### These are public methods to call from outisde (the RL model)
+- GameState(dict config)
+- set_callback(callback cb, int player_id=1) 
+    - sets the callback function to be called when the player can take action
+    - todo: define the callback function interface
+- void run_game()
+    - maybe a blocking function that runs the game until it ends?
+    - or maybe a non-blocking function that runs the game in a separate thread?
+
 ## GameBoardState
 ### var
 - dict config {
@@ -64,7 +80,8 @@
 ### method
 - GameControllerState(GameGridState game_grid_state, GameScoreState game_score_state, int minimum_sorted_length)
 - int select(list[tuple]) # call selector, and send result to gameScoreState
-- bool swap(list[tuple])
+- bool swap(tuple coord1, tuple coord2) # call swaper, and send result to gameScoreState
+    - Swap one at a time, and implement delay for every swap so mimic human behavior
 
 ## SelectHandler
 ## SwapHandler

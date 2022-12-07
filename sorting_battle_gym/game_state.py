@@ -1,6 +1,9 @@
 from dataclasses import dataclass, field
+from collections import namedtuple
 from typing import Any
 import queue
+
+Coord = namedtuple('Coord', ['x', 'y'])
 
 class GameState:
     '''

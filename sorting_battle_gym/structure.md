@@ -1,7 +1,8 @@
+# Sorting Battle Code Structure
 ## GameState
 ### var
 - dict config {
-    - maybe some game mode and settings here
+    - int player_count
 }
 - GameBoardStatse game_board_state
 ### method
@@ -11,8 +12,7 @@
     - sets the callback function to be called when the player can take action
     - todo: define the callback function interface
 - void run_game()
-    - maybe a blocking function that runs the game until it ends?
-    - or maybe a non-blocking function that runs the game in a separate thread?
+    - a blocking function that runs the game until it ends.
 
 ## GameBoardState
 ### var
@@ -53,21 +53,21 @@
 - GameGridState(int row_count, int column_count) # initialize to -1 (Empty)
 - copy(other) # copy constructor (classmethod!)
 - void inplace_copy(GameGridState other)
-- int get(tuple coord)
-- void set(tuple coord, int value)
-- bool is_empty(tuple coord)
-- bool is_garbage(tuple coord)
-- bool is_number(tuple coord)
+- int get(Coord coord)
+- void set(Coord coord, int value)
+- bool is_empty(Coord coord)
+- bool is_garbage(Coord coord)
+- bool is_number(Coord coord)
 - void clear() # flush to -1
 - void load_random(int min_inclusive, int max_exclusive)
 - void load_row(int row_id, list row_values)
 - void load_column(int column_id, list column_values)
 - void load_grid(list grid_values) # gridValues is a 2D-list
 - void pull_down(int column)
-- void swap(tuple coord1, tuple coord2)
-- void swap_and_pull_down(tuple coord1, tuple coord2)
+- void swap(Coord coord1, Coord coord2)
+- void swap_and_pull_down(Coord coord1, Coord coord2)
 - bool push_up(int column, int number) # returns whether the grid has overflowed
-- void remove_tiles(list[tuple] coords)
+- void remove_tiles(list[Coord] coords)
 - bool content_equal(GameGridState other)
 
 ## GameControllerState
@@ -79,12 +79,17 @@
 - SwapHandler swaper
 ### method
 - GameControllerState(GameGridState game_grid_state, GameScoreState game_score_state, int minimum_sorted_length)
-- int select(list[tuple]) # call selector, and send result to gameScoreState
-- bool swap(tuple coord1, tuple coord2) # call swaper, and send result to gameScoreState
-    - Swap one at a time, and implement delay for every swap so mimic human behavior
+- int select(list[Coord]) # call selector, and send result to gameScoreState
+- bool swap(Coord coord1, Coord coord2) # call swaper, and send result to gameScoreState
 
 ## SelectHandler
+### method
+- SelectHandler(GameGridState game_grid_state)
+- int select(list[Coords] coords)
 ## SwapHandler
+### method
+- SwapHandler(GameGridState game_grid_state)
+- bool swap(Coord coord1, Coord coord2)
 
 ## GameScoreState
 ### var

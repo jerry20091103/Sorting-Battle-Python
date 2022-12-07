@@ -1,5 +1,5 @@
 import random
-from game_tile_state import GameTileState
+from sorting_battle_gym.game_tile_state import GameTileState
 
 class GameGridState:
     '''

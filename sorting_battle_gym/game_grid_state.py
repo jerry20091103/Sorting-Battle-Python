@@ -1,5 +1,6 @@
 import random
 from sorting_battle_gym.game_tile_state import GameTileState
+from sorting_battle_gym.game_state import Coord
 
 class GameGridState:
     '''
@@ -42,7 +43,8 @@ class GameGridState:
         :param coord: tuple(row, column).
         :return: the value at (row, column).
         '''
-        # the coord should be check for out of bound
+        assert coord[0] >= 0 and coord[0] < self.row_count and \
+               coord[1] >= 0 and coord[1] < self.column_count
         return self.grid[coord[0]][coord[1]].val
 
     def set(self, coord, value):
@@ -51,7 +53,8 @@ class GameGridState:
         :param coord: tuple(row, column).
         :param value: the value to set.
         '''
-        # the coord should be check for out of bound
+        assert coord[0] >= 0 and coord[0] < self.row_count and \
+               coord[1] >= 0 and coord[1] < self.column_count
         self.grid[coord[0]][coord[1]].val = value
 
     def is_empty(self, coord):
@@ -60,6 +63,8 @@ class GameGridState:
         :param coord: tuple(row, column).
         :return: True if the cell is empty, False otherwise.
         '''
+        assert coord[0] >= 0 and coord[0] < self.row_count and \
+               coord[1] >= 0 and coord[1] < self.column_count
         return self.grid[coord[0]][coord[1]].is_empty()
 
     def is_garbage(self, coord):
@@ -68,6 +73,8 @@ class GameGridState:
         :param coord: tuple(row, column).
         :return: True if the cell is garbage, False otherwise.
         '''
+        assert coord[0] >= 0 and coord[0] < self.row_count and \
+               coord[1] >= 0 and coord[1] < self.column_count
         return self.grid[coord[0]][coord[1]].is_garbage()
 
     def is_number(self, coord):
@@ -76,6 +83,8 @@ class GameGridState:
         :param coord: tuple(row, column).
         :return: True if the cell is a number, False otherwise.
         '''
+        assert coord[0] >= 0 and coord[0] < self.row_count and \
+               coord[1] >= 0 and coord[1] < self.column_count
         return self.grid[coord[0]][coord[1]].is_number()
 
     def clear(self):
@@ -102,8 +111,8 @@ class GameGridState:
         :param row_id: the row index.
         :param row_values: the list of numbers to load.
         '''
-        # the row_id should be check for out of bound
-        # the row_values should be check for length
+        assert row_id >= 0 and row_id < self.row_count
+        assert len(row_values) == self.column_count
         for column in range(self.column_count):
             self.grid[row_id][column].val = row_values[column]
 
@@ -113,8 +122,8 @@ class GameGridState:
         :param column_id: the column index.
         :param column_values: the list of numbers to load.
         '''
-        # the column_id should be check for out of bound
-        # the column_values should be check for length
+        assert column_id >= 0 and column_id < self.column_count
+        assert len(column_values) == self.row_count
         for row in range(self.row_count):
             self.grid[row][column_id].val = column_values[row]
 
@@ -123,7 +132,7 @@ class GameGridState:
         Load numbers to the grid.
         :param grid_values: the list of list of numbers to load.
         '''
-        # the grid_values should be check for length
+        assert len(grid_values) * len(grid_values[0]) == self.row_count * self.column_count
         for row in range(self.row_count):
             for column in range(self.column_count):
                 self.grid[row][column].val = grid_values[row][column]
@@ -131,20 +140,47 @@ class GameGridState:
     def pull_down(self, column):
         '''
         Pull down the column.
+        :param column: the column index.
         '''
-        pass
+        assert column >= 0 and column < self.column_count
+
+        row_to_pull = self.row_count - 1
+        row_to_fill = self.row_count - 1
+        while row_to_pull >= 0 and row_to_fill >= 0 and (self.grid[row_to_fill][column].is_empty() == False):
+            row_to_pull -= 1
+            row_to_fill -= 1
+        while row_to_pull >= 0 and row_to_fill >= 0:
+            if self.grid[row_to_pull][column].is_empty():
+                row_to_pull -= 1
+            else:
+                self.grid[row_to_fill][column].val = self.grid[row_to_pull][column].val
+                self.grid[row_to_pull][column].val = -1
+                row_to_pull -= 1
+                row_to_fill -= 1
 
     def swap(self, coord1, coord2):
         '''
         Swap the value of two tiles.
+        :param coord1: tuple(row, column) of the first tile.
+        :param coord2: tuple(row, column) of the second tile.
         '''
-        pass
+        assert coord1[0] >= 0 and coord1[0] < self.row_count and \
+               coord1[1] >= 0 and coord1[1] < self.column_count
+        assert coord2[0] >= 0 and coord2[0] < self.row_count and \
+               coord2[1] >= 0 and coord2[1] < self.column_count
+        if coord1[0] != coord2[0] or coord1[1] != coord2[1]:
+            self.grid[coord1[0]][coord1[1]].val, self.grid[coord2[0]][coord2[1]].val = \
+                self.grid[coord2[0]][coord2[1]].val, self.grid[coord1[0]][coord1[1]].val
 
     def swap_and_pull_down(self, coord1, coord2):
         '''
         Swap the value of two tiles and pull down.
+        :param coord1: tuple(row, column) of the first tile.
+        :param coord2: tuple(row, column) of the second tile.
         '''
-        pass
+        self.swap(coord1, coord2)
+        self.pull_down(coord1[1])
+        self.pull_down(coord2[1])
 
     def push_up(self, column, number):
         '''
@@ -162,6 +198,14 @@ class GameGridState:
     def content_equal(self, other):
         '''
         Check if the content of two grids are equal.
+        :param other: the other grid to compare.
+        :return: True if the content of two grids are equal, False otherwise.
         '''
+        assert self.row_count == other.row_count and \
+               self.column_count == other.column_count
+        for row in range(self.row_count):
+            for column in range(self.column_count):
+                if self.grid[row][column].val != other.grid[row][column].val:
+                    return False
         return True
     

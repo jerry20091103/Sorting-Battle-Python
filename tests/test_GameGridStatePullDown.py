@@ -11,7 +11,7 @@ class TestGameGridStatePullDown:
                      [-1, -1, -1, -1, -1],
                      [-1, -1, -1, -1, -1]]
         stateCase = GameGridState(5, 5)
-        stateCase = stateCase.load_grid(inputCase)
+        stateCase.load_grid(inputCase)
         stateCase.pull_down(2)
         answer = [[-1, -1, -1, -1, -1],
                   [-1, -1, -1, -1,  5],
@@ -19,7 +19,7 @@ class TestGameGridStatePullDown:
                   [-1, -1,  5, -1, -1],
                   [-1, -1,  4, -1, -1]]
         stateAnswer = GameGridState(5, 5)
-        stateAnswer = stateAnswer.load_grid(answer)
+        stateAnswer.load_grid(answer)
         assert stateCase.content_equal(stateAnswer)
     
     def test_pull_down_case2(self):
@@ -40,7 +40,7 @@ class TestGameGridStatePullDown:
                      [-1, -1, -1, -1, -1],
                      [-1,  1, -1, -1, -1]]
         stateCase = GameGridState(5, 5)
-        stateCase = stateCase.load_grid(inputCase)
+        stateCase.load_grid(inputCase)
         stateCase.pull_down(1)
         answer = [[-1, -1, -1, -1, -1],
                   [-1, -1, -1, -1, -1],
@@ -48,7 +48,7 @@ class TestGameGridStatePullDown:
                   [-1,  5, -1, -1, -1],
                   [-1,  1, -1, -1, -1]]
         stateAnswer = GameGridState(5, 5)
-        stateAnswer = stateAnswer.load_grid(answer)
+        stateAnswer.load_grid(answer)
         assert stateCase.content_equal(stateAnswer)
     
     def test_swap_and_pull_down_case1(self):
@@ -61,7 +61,7 @@ class TestGameGridStatePullDown:
                      [-1,  5, -1, -1, -1],
                      [-1,  4, -1, -1, -1]]
         stateCase = GameGridState(5, 5)
-        stateCase = stateCase.load_grid(inputCase)
+        stateCase.load_grid(inputCase)
         stateCase.swap_and_pull_down((3, 1), (3, 2))
         answer = [[-1, -1, -1, -1, -1],
                   [-1, -1, -1, -1, -1],
@@ -69,7 +69,7 @@ class TestGameGridStatePullDown:
                   [-1,  6, -1, -1, -1],
                   [-1,  4,  5, -1, -1]]
         stateAnswer = GameGridState(5, 5)
-        stateAnswer = stateAnswer.load_grid(answer)
+        stateAnswer.load_grid(answer)
         assert stateCase.content_equal(stateAnswer)
 
     def test_swap_and_pull_down_case2(self):
@@ -82,7 +82,7 @@ class TestGameGridStatePullDown:
                      [-1,  5, -1, -1, -1],
                      [-1,  4, -1, -1, -1]]
         stateCase = GameGridState(5, 5)
-        stateCase = stateCase.load_grid(inputCase)
+        stateCase.load_grid(inputCase)
         stateCase.swap_and_pull_down((1, 1), (1, 2))
         answer = [[-1, -1, -1, -1, -1],
                   [-1, -1, -1, -1, -1],
@@ -90,7 +90,7 @@ class TestGameGridStatePullDown:
                   [-1,  5, -1, -1, -1],
                   [-1,  4,  7, -1, -1]]
         stateAnswer = GameGridState(5, 5)
-        stateAnswer = stateAnswer.load_grid(answer)
+        stateAnswer.load_grid(answer)
         assert stateCase.content_equal(stateAnswer)
     
     def test_swap_and_pull_down_case3(self):
@@ -103,7 +103,7 @@ class TestGameGridStatePullDown:
                      [ 2,  5, -1, -1, -1],
                      [ 3,  4, -1, -1, -1]]
         stateCase = GameGridState(5, 5)
-        stateCase = stateCase.load_grid(inputCase)
+        stateCase.load_grid(inputCase)
         stateCase.swap_and_pull_down((3, 0), (3, 1))
         answer = [[-1, -1, -1, -1, -1],
                   [-1, -1, -1, -1, -1],
@@ -111,7 +111,7 @@ class TestGameGridStatePullDown:
                   [ 5,  2, -1, -1, -1],
                   [ 3,  4, -1, -1, -1]]
         stateAnswer = GameGridState(5, 5)
-        stateAnswer = stateAnswer.load_grid(answer)
+        stateAnswer.load_grid(answer)
         assert stateCase.content_equal(stateAnswer)
         stateCase.swap_and_pull_down((2, 0), (2, 1))
         answer = [[-1, -1, -1, -1, -1],
@@ -120,7 +120,7 @@ class TestGameGridStatePullDown:
                   [ 5,  2, -1, -1, -1],
                   [ 3,  4, -1, -1, -1]]
         stateAnswer = GameGridState(5, 5)
-        stateAnswer = stateAnswer.load_grid(answer)
+        stateAnswer.load_grid(answer)
         assert stateCase.content_equal(stateAnswer)
     
     def test_swap_and_pull_down_case4(self):
@@ -133,7 +133,7 @@ class TestGameGridStatePullDown:
                      [ 2,  5, -1, -1, -1],
                      [ 3,  4, -1, -1, -1]]
         stateCase = GameGridState(5, 5)
-        stateCase = stateCase.load_grid(inputCase)
+        stateCase.load_grid(inputCase)
         stateCase.swap_and_pull_down((4, 2), (4, 3))
         answer = [[-1, -1, -1, -1, -1],
                   [-1, -1, -1, -1, -1],
@@ -141,7 +141,7 @@ class TestGameGridStatePullDown:
                   [ 2,  5, -1, -1, -1],
                   [ 3,  4, -1, -1, -1]]
         stateAnswer = GameGridState(5, 5)
-        stateAnswer = stateAnswer.load_grid(answer)
+        stateAnswer.load_grid(answer)
         assert stateCase.content_equal(stateAnswer)
         
         

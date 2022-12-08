@@ -19,6 +19,7 @@
 - dict config {
     - int seed
     - int row_count, column_count
+    - int number_upper_bound
     - int minimum_sorted_length
     - int base_remove_score
     - int max_effective_combo
@@ -47,6 +48,8 @@
 ### var
 - row_count
 - column_count
+- number_upper_bound
+    - upper bound of the tile number in the grid
 - grid
     - 2D-list of GameTileState
 ### method
@@ -59,7 +62,9 @@
 - bool is_garbage(Coord coord)
 - bool is_number(Coord coord)
 - void clear() # flush to -1
-- void load_random(int min_inclusive, int max_exclusive)
+- void load_random(float row_precentage)
+    - row_precentage: the percentage of rows that are filled with random numbers (leave the rest empty)
+    - the random numbers are generated from 0 to number_upper_bound "[0, number_upper_bound)"
 - void load_row(int row_id, list row_values)
 - void load_column(int column_id, list column_values)
 - void load_grid(list grid_values) # gridValues is a 2D-list
@@ -79,17 +84,20 @@
 - SwapHandler swaper
 ### method
 - GameControllerState(GameGridState game_grid_state, GameScoreState game_score_state, int minimum_sorted_length)
-- int select(list[Coord]) # call selector, and send result to gameScoreState
+- (int, int) select(list[Coord]) # call selector, and send result to gameScoreState
 - bool swap(Coord coord1, Coord coord2) # call swaper, and send result to gameScoreState
 
 ## SelectHandler
 ### method
-- SelectHandler(GameGridState game_grid_state)
-- int select(list[Coords] coords)
+- SelectHandler(GameGridState game_grid_state, minimum_sorted_length)
+- (int, int) select(list[Coords] coords)
+    - This method should check valid, and call functions in gameGridState to remove tiles
+    - returns (remove number tiles count, remove garbage tiles count)
 ## SwapHandler
 ### method
 - SwapHandler(GameGridState game_grid_state)
 - bool swap(Coord coord1, Coord coord2)
+    - This method should check valid, and call functions in gameGridState to swap tiles
 
 ## GameScoreState
 ### var

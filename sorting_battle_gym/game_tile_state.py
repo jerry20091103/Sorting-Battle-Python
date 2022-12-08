@@ -8,7 +8,6 @@ class GameTileState:
         Constructor with val (-1 for empty, -2 for garbage).
         '''
         self.val = val
-        pass
 
     def is_empty(self):
         '''

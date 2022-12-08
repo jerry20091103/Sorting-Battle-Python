@@ -144,11 +144,10 @@ class GameGridState:
         '''
         assert column >= 0 and column < self.column_count
 
-        row_to_pull = self.row_count - 1
         row_to_fill = self.row_count - 1
-        while row_to_pull >= 0 and row_to_fill >= 0 and (self.grid[row_to_fill][column].is_empty() == False):
-            row_to_pull -= 1
+        while row_to_fill >= 0 and (self.grid[row_to_fill][column].is_empty() == False):
             row_to_fill -= 1
+        row_to_pull = row_to_fill - 1
         while row_to_pull >= 0 and row_to_fill >= 0:
             if self.grid[row_to_pull][column].is_empty():
                 row_to_pull -= 1
@@ -186,8 +185,16 @@ class GameGridState:
         '''
         Push up the column with number.
         Returns whether the column has overflowed.
+        :param column: the column index.
+        :param number: the number to push up.
+        :return: True if the column has overflowed, False otherwise.
         '''
-        return False
+        assert column >= 0 and column < self.column_count
+        overflow = (self.grid[0][column].is_empty() == False)
+        for row in range(self.row_count - 1):
+            self.grid[row][column].val = self.grid[row + 1][column].val
+        self.grid[self.row_count - 1][column].val = number
+        return overflow
 
     def remove_tiles(self, tiles):
         '''

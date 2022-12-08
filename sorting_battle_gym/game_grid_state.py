@@ -199,8 +199,14 @@ class GameGridState:
     def remove_tiles(self, tiles):
         '''
         Remove the tiles from the grid.
+        :param tiles: the list of tiles to remove.
         '''
-        pass
+        for tile in tiles:
+            assert tile[0] >= 0 and tile[0] < self.row_count and \
+                   tile[1] >= 0 and tile[1] < self.column_count
+            self.grid[tile[0]][tile[1]].val = -1
+        for column in range(self.column_count):
+            self.pull_down(column)
 
     def content_equal(self, other):
         '''

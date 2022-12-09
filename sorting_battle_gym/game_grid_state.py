@@ -1,13 +1,14 @@
 import random
 from sorting_battle_gym.game_tile_state import GameTileState
 from sorting_battle_gym.game_state import Coord
+from math import floor
 
 class GameGridState:
     '''
     The is currently a empty class to fool the testbench.
     The contents are not guaranteed to be correct.
     '''
-    def __init__(self, row_count, column_count):
+    def __init__(self, row_count, column_count, number_upper_bound=10):
         '''
         Constructor with row_count and column_count.
         :param row_count: the number of rows.
@@ -15,6 +16,7 @@ class GameGridState:
         '''
         self.row_count = row_count
         self.column_count = column_count
+        self.number_upper_bound = number_upper_bound
         self.grid = [[GameTileState() for _ in range(column_count)] for _ in range(row_count)]
 
     @classmethod
@@ -95,15 +97,16 @@ class GameGridState:
             for column in range(self.column_count):
                 self.grid[row][column].val = -1
 
-    def load_random(self, min_inclusive=0, max_exclusive=100):
+    def load_random(self, row_percentage=1):
         '''
         Load random numbers to the grid.
-        :param min_inclusive: the minimum number to generate.
-        :param max_exclusive: the maximum number to generate plus one.
+        :param row_percentage: the percentage of rows that are filled with random numbers [0, number_upper_bound).
         '''
-        for row in range(self.row_count):
+        assert row_percentage >= 0 and row_percentage <= 1
+        row_number = floor(self.row_count * row_percentage)
+        for row in range(self.row_count - row_number, self.row_count):
             for column in range(self.column_count):
-                self.grid[row][column].val = random.randrange(min_inclusive, max_exclusive)
+                self.grid[row][column].val = random.randrange(0, self.number_upper_bound)
 
     def load_row(self, row_id, row_values):
         '''

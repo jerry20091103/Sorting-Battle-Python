@@ -111,9 +111,9 @@ class TestGameGridState:
         for i in range(10):
             percentage += 0.1
             state.load_random(percentage)
-            for row in range(0, 10 - percentage*10):
+            for row in range(0, 10 - int(percentage*10)):
                 for col in range(0, 5):
                     assert state.get((row, col)) == -1
-            for row in range(10 - percentage*10, 10):
+            for row in range(10 - int(percentage*10), 10):
                 for col in range(0, 5):
                     assert state.get((row, col)) != -1

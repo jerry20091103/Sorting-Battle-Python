@@ -56,7 +56,8 @@
 - grid
     - 2D-list of GameTileState
 ### method
-- GameGridState(int row_count, int column_count) # initialize to -1 (Empty)
+- GameGridState(int row_count, int column_count, number_upper_bound)
+    - initialize to -1 (Empty)
 - copy(other) # copy constructor (classmethod!)
 - void inplace_copy(GameGridState other)
 - int get(Coord coord)

@@ -65,8 +65,8 @@
 - bool is_garbage(Coord coord)
 - bool is_number(Coord coord)
 - void clear() # flush to -1
-- void load_random(float row_precentage)
-    - row_precentage: the percentage of rows that are filled with random numbers (leave the rest empty)
+- void load_random(float row_percentage)
+    - row_percentage: the percentage of rows that are filled with random numbers (leave the rest empty)
     - the random numbers are generated from 0 to number_upper_bound "[0, number_upper_bound)"
 - void load_row(int row_id, list row_values)
 - void load_column(int column_id, list column_values)

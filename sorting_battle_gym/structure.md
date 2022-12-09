@@ -22,6 +22,7 @@
     - int number_upper_bound
     - int minimum_sorted_length
     - int base_remove_score
+    - int remove_length_bonus
     - int max_effective_combo
     - float combo_score_step
 }
@@ -31,6 +32,8 @@
 - GameScoreState game_score_state
 ### method
 - GameBoardState(dict config)
+- bool push_new_row(int number_of_columns)
+- bool push_garbage_rows(int number_of_rows, int number_of_columns)
 
 ## GameTileState
 ### const
@@ -112,3 +115,6 @@
 ### method
 - GameScoreState(dict config)
 - void on_remove(int remove_count)
+
+## GamePressureState
+### TODO

@@ -103,6 +103,7 @@
 ### var
 - int total_score
 - int combo
+- int effective_combo
 - int combo_score_buffer
 - dict config {
     int minimum_remove_count, base_remove_score, max_effective_combo, remove_length_bonus

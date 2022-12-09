@@ -17,18 +17,18 @@ dict config {
     - the gym will call agent_callback() when agent can take action
 ```python
 # the callback function should have the following interface
-def agent_callback(game_end, grid1, score1, level1, gird2=None, score2=None, level2=None):
+def agent_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     '''
     :param game_end: int, (for 1P) 0 for not end, 1 for lose
                      int, (for 2P) 0 for not end, 1 for player 1 wins, 2 for player 2 wins
+    :param level: int, current level of game
+
     :param grid1: 2D-list of int, current grid of the player where -1 is empty, -2 is garbage, other valid values are >= 0
     :param score1: int, current score of the player
-    :param level1: int, current level of the player
 
     (for 2P, the following 3 parameters will not be passed in 1P mode)
     :param grid2: 2D-list of int, current grid of the opponent where -1 is empty, -2 is garbage, other valid values are >= 0
     :param score2: int, current score of the opponent
-    :param level2: int, current level of the opponent
     
     :return action_type, coord_list: 
         action_type: int, 0 for idle, 1 for swap, 2 for select
@@ -45,7 +45,7 @@ def agent_callback(game_end, grid1, score1, level1, gird2=None, score2=None, lev
 from sorting_battle_gym.game_state import GameState
 
 # define the callback function
-def player1_callback(game_end, grid, score, level, gird2=None, score2=None, level2=None):
+def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     # make a decision for player 1
     return action_type, coord_list
 

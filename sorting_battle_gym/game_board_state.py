@@ -28,7 +28,11 @@ class GameBoardState:
         # load init board
         if config['seed'] is not None:
             np.random.seed(config['seed'])
-        self.game_grid_state = GameGridState(config['row_count'], config['column_count'], config['number_upper_bound'])
+        self.game_grid_state = GameGridState(
+            config['row_count'],
+            config['column_count'],
+            config['number_upper_bound']
+        )
         self.game_score_state = GameScoreState({
             'minimum_remove_count': config['minimum_sorted_length'],
             'base_remove_score': config['base_remove_score'],
@@ -36,7 +40,11 @@ class GameBoardState:
             'max_effective_combo': config['max_effective_combo'],
             'combo_score_step': config['combo_score_step']
         })
-        self.game_controller_state = GameControllerState(self.game_grid_state, self.game_score_state, config['minimum_sorted_length'])
+        self.game_controller_state = GameControllerState(
+            self.game_grid_state,
+            self.game_score_state,
+            config['minimum_sorted_length']
+        )
         self.game_pressure_state = None # todo: GamePressureState()
 
     def push_new_row(self, number_of_columns):

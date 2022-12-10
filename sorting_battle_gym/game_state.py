@@ -1,65 +1,64 @@
+'''
+This moduel defines the abstract base class for all game modes and represents the whole game.
+Also defines Coord type for coordinates.
+'''
 from dataclasses import dataclass, field
 from collections import namedtuple
 from typing import Any
+from abc import ABC, abstractmethod
+from time import sleep
 import queue
+import numpy as np
 
 Coord = namedtuple('Coord', ['x', 'y'])
 
-class GameState:
+class GameState(ABC):
     '''
-    This is the class that represents the whole game.
-    Only this class should be used by the RL agent.
+    This is Abstract base class for all game modes and represents the whole game.
+    Also provides a tick based task scheduler.
     '''
-
     @dataclass(order=True)
     class Task:
+        '''
+        This class represents a task in the scheduler.
+        '''
         tick: int
         callback: Any=field(compare=False)
         args: Any=field(compare=False)
         kwargs: Any=field(compare=False)
 
-    def __init__(self, config):
+    def __init__(self, player_swap_delay, player_select_delay):
         '''
         Constructor with config.
         '''
         # initialize the scheduler
         self.current_tick = 0
         self.task_queue = queue.PriorityQueue()
-        self.test_count = 10
-        # initialize the game
-        self.swap_delay = config['swap_delay']
-        self.remove_delay = config['remove_delay']
-        self.player_callback = [None, None]
-        # add the first task
-        self.add_task(0, self.regular_callback)
+        # init common game parameters
+        self.player_swap_delay = player_swap_delay
+        self.player_select_delay = player_select_delay
+        self.level = 0
+        self.game_over = False
+        self.end_scheduler = False
 
-    def regular_callback(self):
+    def run_game(self, realtime):
         '''
-        The regular callback function.
-        :param player_id: the player id.
+        Run the game.
         '''
-        print("regular callback, test_count:", self.test_count)
-        self.test_count -= 1
-        if self.test_count > 0:
-            self.add_task(5, self.regular_callback)
+        # run scheduler
+        while not self.task_queue.empty():
+            task = self.task_queue.get()
+            assert task.tick >= self.current_tick, "scheduler is out of order"
+            # use a very simple sleep to simulate realtime for now...
+            if realtime:
+                sleep((task.tick - self.current_tick) * 0.02)
+            self.current_tick = task.tick
+            print('tick: ', self.current_tick)
+            task.callback(*task.args, **task.kwargs)
+            if self.end_scheduler:
+                break
 
-    def set_player_callback(self, callback, player_id=1):
-        '''
-        Set the callback function for RL agent.
-        :param callback: the callback function.
-        :param player_id: the player id. Default is 1.
-        '''
-        self.player_callback[player_id-1] = callback
-
-    def handle_player_callback(self, player_id):
-        '''
-        Handle the callback function for RL agent.
-        :param player_id: the player id.
-        '''
-        next_tick = self.player_callback[player_id](self.current_tick)
-        self.add_task(next_tick, self.handle_player_callback, player_id)
-
-    def add_task(self, tick, callback, *args, **kwargs):
+    def push_task(self, tick, callback, *args, **kwargs):
         '''
         Add a task to the scheduler.
         :param tick: the tick to execute the task.
@@ -70,21 +69,70 @@ class GameState:
         new_task = self.Task(self.current_tick + tick, callback, args, kwargs)
         self.task_queue.put(new_task)
 
-    def run_game(self):
+    def level_up_task(self):
         '''
-        Run the game.
+        Level up the game.
         '''
-        assert self.player_callback[0] or self.player_callback[1], "no player callback is set"
-        if self.player_callback[0] is not None:
-            self.handle_player_callback(0)
-        if self.player_callback[1] is not None:
-            self.handle_player_callback(1)
-        # run scheduler
-        while not self.task_queue.empty():
-            task = self.task_queue.get()
-            assert task.tick >= self.current_tick, "scheduler is out of order"
-            self.current_tick = task.tick
-            print('tick: ', self.current_tick)
-            task.callback(*task.args, **task.kwargs)
-            if self.current_tick > 50:
-                break
+        self.level += 1
+        self.push_task(self.get_tick_between_level_up(), self.level_up_task)
+
+    def gamer_over_task(self):
+        '''
+        Game over. This task will be the last task in the scheduler.
+        '''
+        self.end_scheduler = True
+
+    @abstractmethod
+    def game_end(self):
+        '''
+        notify players that the game is over.
+        '''
+
+    @abstractmethod
+    def push_new_row_task(self):
+        '''
+        Add a new row to the game board
+        '''
+
+    @abstractmethod
+    def set_player_callback(self, callback, player_id=1):
+        '''
+        Set the callback function for RL agent.
+        :param callback: the callback function.
+        :param player_id: the player id. Default is 1.
+        '''
+
+    @abstractmethod
+    def check_player_callback(self):
+        '''
+        Check if the callback all required player callbacks are set.
+        :return: True if all required player callbacks are set.
+        '''
+
+    @abstractmethod
+    def player_callback_task(self, player_id):
+        '''
+        Handle the callback function for RL agent.
+        :param player_id: the player id.
+        '''
+
+    def init_tasks(self):
+        '''
+        Add required initial tasks when the game starts.
+        Must be called from the subclass.
+        '''
+        self.push_task(self.get_tick_between_level_up, self.level_up_task)
+        self.push_task(self.get_tick_between_new_row, self.push_new_row_task)
+
+    def get_tick_between_new_row(self):
+        '''
+        Get the tick between new row.
+        '''
+        return int(150 - 90 * np.clip(np.power(self.level/20, 4), 0, 1))
+
+    def get_tick_between_level_up(self):
+        '''
+        Get the tick between level up.
+        '''
+        return 300
+

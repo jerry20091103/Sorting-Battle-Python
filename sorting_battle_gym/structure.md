@@ -1,23 +1,35 @@
 # Sorting Battle Code Structure
-## GameState (abc)
+## GameBase
 ### var
 - dict config {
     - int player_count
+    - int player_swap_delay 
+    - int player_select_delay
+    - bool realtime
 }
 - int player_count
-- int level
+- bool realtime
+- GameState game_state
+### method
+- GameBase(dict config)
+    - initialize the game and the constructor of required game modes
+- void run_game()
+    - call the run_game() of the game mode
+- void set_callback(callback cb, int player_id=1)
+    - call the set_player_callback() of the game mode
+## GameState (abc)
+### var
 - int current_tick
 - queue.PriorityQueue task_queue
+- int player_swap_delay 
+- int player_select_delay
+- int level
+- bool game_over
 ### method
-#### These are public methods to call from outisde (the RL model)
-- GameState(dict config)
-- set_callback(callback cb, int player_id=1) 
-    - sets the callback function to be called when the player can take action
-    - todo: define the callback function interface
-- void run_game()
+- GameState(player_swap_delay, player_select_delay) **(abstract)**
+- void run_game(bool realtime)
     - a blocking function that runs the game until it ends.
     - runs the scheduler to execute tasks
-#### Private methods
 - void push_task(tick, callback, *args, **kwargs)
     - push a task to the task queue
 - void level_up_task()
@@ -25,8 +37,16 @@
 - void game_over_task()
     - task to end the game
     - also clears the scheduler
+- vodi game_end() **(abstract)**
+    - end the game
 - void push_new_row_task() **(abstract)**
     - task to push new row to the game board
+- void set_player_callback(callback cb, int player_id=1) **(abstract)**
+    - sets the callback function to be called when the player can take action
+- bool check_player_callback() **(abstract)**
+    - check if all required callbacks are set
+- void player_callback_task(int player_id) **(abstract)**
+    - handles player callback
 - void init_tasks() **(virtual)**
     - initialize level up and push new row tasks
 - void get_tick_between_new_row() **(virtual)**
@@ -38,16 +58,23 @@
 ### var
 - GameBoardState game_board_state
 - float empty_row_percentage = 0.8
+- callback player_callback
 ### methods
-- Endless1PGameState(GameBoardState game_board_state, float empty_row_percentage)
+- Endless1PGameState(GameBoardState game_board_state, int player_swap_delay, int player_select_delay, float empty_row_percentage=0.8)
+- void push_new_row_task() **(override)**
+- bool check_player_callback() **(override)**
+    - check if player_callback is set
+- void set_player_callback(callback cb, int player_id=1) **(override)**
+- void player_callback_task(int player_id) **(override)**
+    - handle player callback
 - void init_tasks() **(override)**
     - needs to call super().init_tasks()
     - push load_task()
+    - push task for player 1 to take action
+- void game_end() **(override)**
+    - notify the player that the game is over
 - void load_task()
     - task to load the game board with ramdom numbers
-- void push_new_row_task() **(override)**
-    - needs to call super().push_new_row_task()
-    - push load_task()
 
 ## GameBoardState
 ### var

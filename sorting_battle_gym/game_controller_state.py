@@ -16,7 +16,11 @@ class GameControllerState:
         :param game_score_state: the GameScoreState object.
         :param minimum_sorted_length: the minimum length of sorted sequence.
         '''
-        pass
+        self.game_grid_state = game_grid_state
+        self.game_score_state = game_score_state
+        self.minimum_sorted_length = minimum_sorted_length
+        self.selector = SelectHandler(self.game_grid_state, self.minimum_sorted_length)
+        self.swapper = SwapHandler(self.game_grid_state)
 
     def select(self, coords):
         '''
@@ -24,20 +28,15 @@ class GameControllerState:
         :param coords: a list of coords.
         :return: tuple(remove number tiles count, remove garbage tiles count)
         '''
-        # TODO: call SelectHandler to select the tiles at coords
-        # TODO: send result to GameScoreState by on_remove()
-        pass
-        # question1: call on_remove() with parameter send remove_numve_tiles_count? (no need for garbage)
-        # question2: need to call on_remove() even if remove_number_tiles_count <3? (for combo purpose)
+        remove_number_tiles_count, remove_garbage_tiles_count = self.selector.select(coords)
+        self.game_score_state.on_remove(remove_number_tiles_count)
+        return (remove_number_tiles_count, remove_garbage_tiles_count)
 
-    def swap(self, coord1, coord2):
+    def swap(self, coords):
         '''
         Call SwapHandler to swap the tiles at coord1 and coord2, then send result to GameScoreState.
         :param coord1: the first coord.
         :param coord2: the second coord.
         :return: True if swap is successful, False otherwise.
         '''
-        # TODO: call SwapHandler to swap the tiles at coord1 and coord2
-        # TODO: send result to GameScoreState by on_swap()
-        pass
-        # question1: still need to send result to GameScoreState? (for combo purpose)
+        return self.swapper.swap(coords)

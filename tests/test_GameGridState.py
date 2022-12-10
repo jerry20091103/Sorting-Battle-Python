@@ -101,3 +101,19 @@ class TestGameGridState:
                         state.swap(p1, p2)
                         assert state.get(p1) == val2
                         assert state.get(p2) == val1
+
+    def test_load_random(self):
+        '''
+        Test the load_random method of GameGridState.
+        '''
+        state = GameGridState(10, 5)
+        percentage = 0
+        for i in range(10):
+            percentage += 0.1
+            state.load_random(percentage)
+            for row in range(0, 10 - int(percentage*10)):
+                for col in range(0, 5):
+                    assert state.get((row, col)) == -1
+            for row in range(10 - int(percentage*10), 10):
+                for col in range(0, 5):
+                    assert state.get((row, col)) != -1

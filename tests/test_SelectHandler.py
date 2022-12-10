@@ -40,7 +40,7 @@ class TestSelectHandler:
         grid_state = GameGridState(5, 5)
         grid_state.load_grid(input_case)
         select_handler = SelectHandler(grid_state, 3)
-        assert select_handler.select([(4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]) == 5
+        assert select_handler.select([(4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]) == (5, 0)
         answer = [[-1, -1, -1, -1, -1],
                   [-1, -1, -1, -1, -1],
                   [-1,  7, -1, -1, -1],
@@ -195,7 +195,7 @@ class TestSelectHandler:
         grid_answer.load_grid(input_case)
         assert grid_state.content_equal(grid_answer)
     
-    def test_remove_garbage(self):
+    def test_remove_garbage_horizontal(self):
         '''
         Garbage tiles ajacent to the selection should be removed. 
         (only vertical and horizontal, not diagonal ones)
@@ -218,4 +218,28 @@ class TestSelectHandler:
         grid_answer = GameGridState(5, 5)
         grid_answer.load_grid(answer)
         assert grid_state.content_equal(grid_answer)
- 
+
+    def test_remove_garbage_vertical(self):
+        '''
+        Garbage tiles ajacent to the selection should be removed. 
+        (only vertical and horizontal, not diagonal ones)
+        '''
+        input_case = [[-1, -2, -1, -1, -1],
+                      [-1,  7, -1, -1, -2],
+                      [-1,  6, -2, -1,  9],
+                      [-2,  5,  6,  7,  8],
+                      [-2,  -2, -2, -2, -2]]
+        grid_state = GameGridState(5, 5)
+        grid_state.load_grid(input_case)
+        select_handler = SelectHandler(grid_state, 3)
+        # remove 3 numbers and 4 garbage tiles
+        assert select_handler.select([(1, 1), (2, 1), (3, 1)]) == (3, 4)
+        answer = [[-1, -1, -1, -1, -1],
+                  [-1,  -1, -1, -1, -2],
+                  [-1,  -1, -1, -1,  9],
+                  [-1,  -1,  6,  7,  8],
+                  [-2,  -1, -2, -2, -2]]
+        grid_answer = GameGridState(5, 5)
+        grid_answer.load_grid(answer)
+        assert grid_state.content_equal(grid_answer)
+

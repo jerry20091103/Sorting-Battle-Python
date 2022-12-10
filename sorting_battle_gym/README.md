@@ -55,7 +55,7 @@ def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     current_state = (level, grid1, score1)
     # and uses the replay memory as well as the current state to learn
     model_player1.learn(current_state)
-    # the model takes according to current state of the game
+    # the model takes action according to current state of the game
     action = model_player1.take_action(current_state)
     # the current state is stored to replay memory for future learning
     model_player1.store_state(current_state)
@@ -90,7 +90,7 @@ def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     current_state = (level, grid1, score1, grid2, score2)
     # and uses the replay memory as well as the current state to learn
     model_player1.learn(current_state)
-    # the model takes according to current state of the game
+    # the model takes action according to current state of the game
     action = model_player1.take_action(current_state)
     # the current state is stored to replay memory for future learning
     model_player1.store_state(current_state)

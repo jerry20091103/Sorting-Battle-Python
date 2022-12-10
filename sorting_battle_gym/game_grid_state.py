@@ -5,8 +5,9 @@ from math import floor
 
 class GameGridState:
     '''
-    The is currently a empty class to fool the testbench.
-    The contents are not guaranteed to be correct.
+    GameGridState represents a grid.
+    Exposes some public methods for manipulating the grid.
+    A board only has one grid.
     '''
     def __init__(self, row_count, column_count, number_upper_bound=10):
         '''

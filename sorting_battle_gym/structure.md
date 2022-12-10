@@ -89,7 +89,7 @@
 ### method
 - GameControllerState(GameGridState game_grid_state, GameScoreState game_score_state, int minimum_sorted_length)
 - (int, int) select(list[Coord]) # call selector, and send result to gameScoreState
-- bool swap(Coord coord1, Coord coord2) # call swaper, and send result to gameScoreState
+- bool swap(Coord coord1, Coord coord2) # call swaper
 
 ## SelectHandler
 ### method
@@ -100,8 +100,9 @@
 ## SwapHandler
 ### method
 - SwapHandler(GameGridState game_grid_state)
-- bool swap(Coord coord1, Coord coord2)
+- bool swap(list[Coords] coords)
     - This method should check valid, and call functions in gameGridState to swap tiles
+    - returns True is successfully swap, False otherwise
 
 ## GameScoreState
 ### var

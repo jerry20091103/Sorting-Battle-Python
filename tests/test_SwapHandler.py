@@ -64,6 +64,9 @@ class TestSwapHandler:
         # swap non-adjacent tiles
         assert swap_handler.swap([(0, 0), (2, 4)]) == False
         assert grid_state.content_equal(grid_answer)
+        # swap non-adjacent tiles (same position)
+        assert swap_handler.swap([(0, 0), (0, 0)]) == False
+        assert grid_state.content_equal(grid_answer)
 
     def test_swap_garbage(self):
         '''

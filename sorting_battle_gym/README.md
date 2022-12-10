@@ -15,8 +15,10 @@ dict config {
 - void run_game()
     - a blocking function that runs the game until it ends.
     - the gym will call agent_callback() when agent can take action
+- The callback function is as follows:
 ```python
 # the callback function should have the following interface
+# This functions is called when it's time for the agent to take action
 def agent_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     '''
     :param game_end: int, (for 1P) 0 for not end, 1 for lose
@@ -44,9 +46,22 @@ def agent_callback(game_end, level, grid1, score1, gird2=None, score2=None):
 ```python
 from sorting_battle_gym.game_state import GameState
 
+# initialze the ML model (we use "model" as an example
+model_player1 = Model(...)
+
 # define the callback function
 def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
-    # make a decision for player 1
+    # the model gets the current state of the game
+    current_state = (level, grid1, score1)
+    # and uses the replay memory as well as the current state to learn
+    model_player1.learn(current_state)
+    # the model takes action according to current state of the game
+    action = model_player1.take_action(current_state)
+    # the current state is stored to replay memory for future learning
+    model_player1.store_state(current_state)
+    # convert the action to the format that the gym can understand
+    action_type, coord_list = action...
+    # give the action to the gym
     return action_type, coord_list
 
 # initialize the gym
@@ -56,6 +71,58 @@ config = {
 game_state = GameState(config)
 # set the callback function
 game_state.set_callback(player1_callback, 1)
+# run the game
+game_state.run_game()
+```
+> The following is an example of how to use the gym in 2P mode
+- The 2P mode is very similar to the 1P mode, except that there are two instance of the model and two callback functions
+```python
+from sorting_battle_gym.game_state import GameState
+
+# initialze 2 ML models (we use "Model" as an example
+model_player1 = Model(...)
+model_player2 = Model(...)
+
+# define the callback function for player 1
+def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
+    # the model gets the current state of the game
+    # In 2P mode you also get the opponent's (player 2's) grid and score
+    current_state = (level, grid1, score1, grid2, score2)
+    # and uses the replay memory as well as the current state to learn
+    model_player1.learn(current_state)
+    # the model takes action according to current state of the game
+    action = model_player1.take_action(current_state)
+    # the current state is stored to replay memory for future learning
+    model_player1.store_state(current_state)
+    # convert the action to the format that the gym can understand
+    action_type, coord_list = action...
+    # give the action to the gym
+    return action_type, coord_list
+
+# define the callback function for player 2
+def player2_callback(game_end, level, grid1, score1, gird2=None, score2=None):
+    # the model gets the current state of the game
+    # In 2P mode you also get the opponent's (player 1's) grid and score
+    current_state = (level, grid1, socre1, grid2, score2)
+    # and uses the replay memory as well as the current state to learn
+    model_player2.learn(current_state)
+    # the model takes according to current state of the game
+    action = model_player2.take_action(current_state)
+    # the current state is stored to replay memory for future learning
+    model_player2.store_state(current_state)
+    # convert the action to the format that the gym can understand
+    action_type, coord_list = action...
+    # give the action to the gym
+    return action_type, coord_list
+
+# initialize the gym
+config = {
+    'player_count': 2
+}
+game_state = GameState(config)
+# set the callback function for player 1 and player 2
+game_state.set_callback(player1_callback, 1)
+game_state.set_callback(player2_callback, 2)
 # run the game
 game_state.run_game()
 ```

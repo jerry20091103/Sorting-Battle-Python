@@ -1,14 +1,18 @@
 # sorting_battle_gym package
-## GameState class
+## GameBase class
 ### var
 ```python
 dict config {
     'player_count': int # 1 or 2
+    'player_swap_delay': int # simulated delay for AI in ticks
+    'player_select_delay': int # simulated delay for AI in ticks
+    'realtime': bool # whether to run the game in realtime
+    # Each tick is 1/50 second (0.02 second)
 }
 ```
 ### Public Method
 > These are public methods to call from outisde (the RL model)
-- GameState(dict config)
+- GameBase(dict config)
     - The constructor of the gym
 - set_callback(callback cb, int player_id=1) 
     - sets the callback function to be called when the player can take action
@@ -44,7 +48,7 @@ def agent_callback(game_end, level, grid1, score1, gird2=None, score2=None):
 ### Usage
 > The following is an example of how to use the gym in 1P mode
 ```python
-from sorting_battle_gym.game_state import GameState
+from sorting_battle_gym.game_base import GameBase
 
 # initialze the ML model (we use "model" as an example
 model_player1 = Model(...)
@@ -66,18 +70,21 @@ def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
 
 # initialize the gym
 config = {
-    'player_count': 1
+    'player_count': 1,
+    'player_swap_delay': 10,
+    'player_select_delay': 50,
+    'realtime': False
 }
-game_state = GameState(config)
+game_base = GameBase(config)
 # set the callback function
-game_state.set_callback(player1_callback, 1)
+game_base.set_callback(player1_callback, 1)
 # run the game
-game_state.run_game()
+game_base.run_game()
 ```
 > The following is an example of how to use the gym in 2P mode
 - The 2P mode is very similar to the 1P mode, except that there are two instance of the model and two callback functions
 ```python
-from sorting_battle_gym.game_state import GameState
+from sorting_battle_gym.game_base import GameState
 
 # initialze 2 ML models (we use "Model" as an example
 model_player1 = Model(...)
@@ -118,11 +125,14 @@ def player2_callback(game_end, level, grid1, score1, gird2=None, score2=None):
 # initialize the gym
 config = {
     'player_count': 2
+    'player_swap_delay': 10,
+    'player_select_delay': 50,
+    'realtime': False
 }
-game_state = GameState(config)
+game_base = GameState(config)
 # set the callback function for player 1 and player 2
-game_state.set_callback(player1_callback, 1)
-game_state.set_callback(player2_callback, 2)
+game_base.set_callback(player1_callback, 1)
+game_base.set_callback(player2_callback, 2)
 # run the game
-game_state.run_game()
+game_base.run_game()
 ```

@@ -2,7 +2,6 @@ class SwapHandler:
     '''
     SwapHandler handles the swap command of player or agent.
     '''
-
     def __init__(self, game_grid_state):
         '''
         Constructor with game_grid_state.

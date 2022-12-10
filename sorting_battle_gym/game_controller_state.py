@@ -1,5 +1,3 @@
-from sorting_battle_gym.game_grid_state import GameGridState
-from sorting_battle_gym.game_score_state import GameScoreState
 from sorting_battle_gym.select_handler import SelectHandler
 from sorting_battle_gym.swap_handler import SwapHandler
 

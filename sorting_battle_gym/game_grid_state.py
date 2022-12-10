@@ -1,7 +1,6 @@
 import random
-from sorting_battle_gym.game_tile_state import GameTileState
-from sorting_battle_gym.game_state import Coord
 from math import floor
+from sorting_battle_gym.game_tile_state import GameTileState
 
 class GameGridState:
     '''
@@ -101,9 +100,10 @@ class GameGridState:
     def load_random(self, row_percentage=1):
         '''
         Load random numbers to the grid.
-        :param row_percentage: the percentage of rows that are filled with random numbers [0, number_upper_bound).
+        :param row_percentage: the percentage of rows that are filled with random numbers.
+                               range of the numbers: [0, number_upper_bound).
         '''
-        assert row_percentage >= 0 and row_percentage <= 1
+        assert 0 <= row_percentage <= 1
         row_number = floor(self.row_count * row_percentage)
         for row in range(self.row_count - row_number, self.row_count):
             for column in range(self.column_count):
@@ -115,7 +115,7 @@ class GameGridState:
         :param row_id: the row index.
         :param row_values: the list of numbers to load.
         '''
-        assert row_id >= 0 and row_id < self.row_count
+        assert 0 <= row_id < self.row_count
         assert len(row_values) == self.column_count
         for column in range(self.column_count):
             self.grid[row_id][column].val = row_values[column]
@@ -126,7 +126,7 @@ class GameGridState:
         :param column_id: the column index.
         :param column_values: the list of numbers to load.
         '''
-        assert column_id >= 0 and column_id < self.column_count
+        assert 0 <= column_id < self.column_count
         assert len(column_values) == self.row_count
         for row in range(self.row_count):
             self.grid[row][column_id].val = column_values[row]
@@ -146,10 +146,10 @@ class GameGridState:
         Pull down the column.
         :param column: the column index.
         '''
-        assert column >= 0 and column < self.column_count
+        assert 0 <= column < self.column_count
 
         row_to_fill = self.row_count - 1
-        while row_to_fill >= 0 and (self.grid[row_to_fill][column].is_empty() == False):
+        while row_to_fill >= 0 and (not self.grid[row_to_fill][column].is_empty()):
             row_to_fill -= 1
         row_to_pull = row_to_fill - 1
         while row_to_pull >= 0 and row_to_fill >= 0:
@@ -193,8 +193,8 @@ class GameGridState:
         :param number: the number to push up.
         :return: True if the column has overflowed, False otherwise.
         '''
-        assert column >= 0 and column < self.column_count
-        overflow = (self.grid[0][column].is_empty() == False)
+        assert 0 <= column < self.column_count
+        overflow = (not self.grid[0][column].is_empty())
         for row in range(self.row_count - 1):
             self.grid[row][column].val = self.grid[row + 1][column].val
         self.grid[self.row_count - 1][column].val = number

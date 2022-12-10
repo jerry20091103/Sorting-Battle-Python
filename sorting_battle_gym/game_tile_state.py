@@ -14,18 +14,18 @@ class GameTileState:
         Check if the tile is empty.
         return: True if the tile is empty, False otherwise.
         '''
-        return (self.val == -1)
+        return self.val == -1
 
     def is_garbage(self):
         '''
         Check if the tile is garbage.
         return: True if the tile is garbage, False otherwise.
         '''
-        return (self.val == -2)
+        return self.val == -2
 
     def is_number(self):
         '''
         Check if the tile is a number.
         return: True if the tile is a number, False otherwise.
         '''
-        return (self.val >= 0)
+        return self.val >= 0

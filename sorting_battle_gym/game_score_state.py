@@ -1,7 +1,10 @@
+'''
+This module contains the GameScoreState class.
+'''
 import math
 class GameScoreState:
     '''
-    Represents a board's current scoring state. This includes info such as the current score and combo. 
+    Represents a board's current scoring state. This includes info such as the current score and combo.
     GameScoreState also implements the scoring algorithm.
     '''
     def __init__(self, config):
@@ -35,7 +38,7 @@ class GameScoreState:
             self.reset_combo()
         else:
             self.register_combo(remove_count)
-    
+
     def register_combo(self, remove_count):
         '''
         Register a combo.
@@ -48,7 +51,7 @@ class GameScoreState:
                               )
         self.total_score += plus_score
         self.combo_score_buffer += plus_score
-    
+
     def reset_combo(self):
         '''
         Reset the combo.

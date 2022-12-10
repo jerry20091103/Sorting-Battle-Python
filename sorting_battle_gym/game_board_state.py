@@ -1,8 +1,11 @@
+'''
+This module contains the GameBoardState class.
+'''
+import numpy as np
 from sorting_battle_gym.game_grid_state import GameGridState
 from sorting_battle_gym.game_score_state import GameScoreState
 from sorting_battle_gym.game_controller_state import GameControllerState
 # todo: from sorting_battle_gym.game_pressure_state import GamePressureState
-import numpy as np
 
 class GameBoardState:
     '''
@@ -42,14 +45,29 @@ class GameBoardState:
         :param number_of_columns: The number of columns in the new row.
         :return: whether the board has overflowed.
         '''
-        # TODO
-        return False
+        assert number_of_columns <= self.game_grid_state.column_count, 'number_of_columns must be less than or equal to column_count'
+        columns = np.random.choice(self.game_grid_state.column_count, number_of_columns, replace=False)
+        has_overflow = False
+        for column in columns:
+            has_overflow = has_overflow or self.game_grid_state.push_up(column, np.random.randint(0, self.game_grid_state.number_upper_bound))
+        return has_overflow
 
-    def push_garbage_rows(self, number_of_columns):
+    def push_garbage_rows(self, number_of_rows, number_of_columns):
         '''
         Push a garbage row to the board.
-        :param number_of_columns: The number of columns in the new row.
+        :param number_of_rows: The number of rows to push.
+        :param number_of_columns: The number of columns in the first row.
         :return: whether the board has overflowed.
         '''
-        # TODO
-        return False
+        assert number_of_columns <= self.game_grid_state.column_count, 'number_of_columns must be less than or equal to column_count'
+        has_overflow = False
+        for row in range(number_of_rows):
+            columns = np.random.permutation(self.game_grid_state.column_count)
+            column_limit = 0
+            if row == 0:
+                column_limit = min(number_of_columns, len(columns))
+            else:
+                column_limit = len(columns)
+            for column in columns[:column_limit]:
+                has_overflow = has_overflow or self.game_grid_state.push_up(column, -2)
+        return has_overflow

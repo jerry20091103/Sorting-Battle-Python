@@ -1,10 +1,13 @@
 # Sorting Battle Code Structure
-## GameState
+## GameState (abc)
 ### var
 - dict config {
     - int player_count
 }
-- GameBoardStatse game_board_state
+- int player_count
+- int level
+- int current_tick
+- queue.PriorityQueue task_queue
 ### method
 #### These are public methods to call from outisde (the RL model)
 - GameState(dict config)
@@ -13,6 +16,38 @@
     - todo: define the callback function interface
 - void run_game()
     - a blocking function that runs the game until it ends.
+    - runs the scheduler to execute tasks
+#### Private methods
+- void push_task(tick, callback, *args, **kwargs)
+    - push a task to the task queue
+- void level_up_task()
+    - task to level up the game
+- void game_over_task()
+    - task to end the game
+    - also clears the scheduler
+- void push_new_row_task() **(abstract)**
+    - task to push new row to the game board
+- void init_tasks() **(virtual)**
+    - initialize level up and push new row tasks
+- void get_tick_between_new_row() **(virtual)**
+    - returns the tick between each new row task
+- void get_tick_between_level_up() **(virtual)**
+    - returns the tick between each level up task
+
+## Endless1PGameState (GameState)
+### var
+- GameBoardState game_board_state
+- float empty_row_percentage = 0.8
+### methods
+- Endless1PGameState(GameBoardState game_board_state, float empty_row_percentage)
+- void init_tasks() **(override)**
+    - needs to call super().init_tasks()
+    - push load_task()
+- void load_task()
+    - task to load the game board with ramdom numbers
+- void push_new_row_task() **(override)**
+    - needs to call super().push_new_row_task()
+    - push load_task()
 
 ## GameBoardState
 ### var

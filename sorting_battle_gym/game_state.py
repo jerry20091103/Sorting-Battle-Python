@@ -53,7 +53,7 @@ class GameState(ABC):
             if realtime:
                 sleep((task.tick - self.current_tick) * 0.02)
             self.current_tick = task.tick
-            print('tick: ', self.current_tick)
+            print('# tick:', self.current_tick, task.callback.__name__)
             task.callback(*task.args, **task.kwargs)
             if self.end_scheduler:
                 break

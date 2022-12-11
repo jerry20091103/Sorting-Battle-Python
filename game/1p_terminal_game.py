@@ -7,6 +7,18 @@ import sys
 sys.path.append("../")
 from sorting_battle_gym.game_base import GameBase
 
+def get_tile_char(tile_val):
+    '''
+    Get the character representation of the tile value.
+    :param tile_val: the tile value.
+    :return: the character representation of the tile value.
+    '''
+    if tile_val == -1:
+        return "   "
+    if tile_val == -2:
+        return "  X"
+    return "  "+ str(tile_val)
+
 def player1_callback(game_end, level, grid1, score1, grid2=None, score2=None):
     '''
     Callback to control the player 1 from terminal.
@@ -24,7 +36,7 @@ def player1_callback(game_end, level, grid1, score1, grid2=None, score2=None):
     for i in range(len(grid1)):
         print(f"{i:3}", end="|")
         for tile in grid1[i]:
-            print(f"{tile:3}", end="")
+            print(f"{get_tile_char(tile):3}", end="")
         print()
     # get action
     action_type = int(input("Enter action type (idle:0, swap:1, select:2): "))

@@ -8,6 +8,9 @@ sys.path.append("../")
 from sorting_battle_gym.game_base import GameBase
 
 def player1_callback(game_end, level, grid1, score1, grid2=None, score2=None):
+    '''
+    Callback to control the player 1 from terminal.
+    '''
     # show level and score
     print ("=========================")
     print("Game End: ", game_end)
@@ -31,7 +34,7 @@ def player1_callback(game_end, level, grid1, score1, grid2=None, score2=None):
         delay_ticks = int(input("Enter delay in ticks: "))
         return action_type, delay_ticks
     # swap
-    elif action_type == 1:
+    if action_type == 1:
         coord_list = []
         # get 2 coordinates
         for i in range(2):
@@ -39,7 +42,7 @@ def player1_callback(game_end, level, grid1, score1, grid2=None, score2=None):
             coord_list.append([int(coord_x), int(coord_y)])
         return action_type, coord_list
     # select
-    elif action_type == 2:
+    if action_type == 2:
         coord_list = []
         # input a list of coordinates
         coord = input("Enter coord (f when done) (x y): ")
@@ -48,6 +51,8 @@ def player1_callback(game_end, level, grid1, score1, grid2=None, score2=None):
             coord_list.append([int(coord_x), int(coord_y)])
             coord = input("Enter coord (f when done) (x y): ")
         return action_type, coord_list
+    print("Invalid action type")
+    return None, None
 
 config = {
     'player_count': 1,

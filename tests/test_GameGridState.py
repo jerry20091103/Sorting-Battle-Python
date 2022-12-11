@@ -1,5 +1,6 @@
 from sorting_battle_gym.game_grid_state import GameGridState
 import numpy as np
+import math
 
 class TestGameGridState:
     def test_constructor(self):
@@ -57,10 +58,10 @@ class TestGameGridState:
         for case in cases:
             stateA = GameGridState(case[0], case[1])
             stateB = GameGridState(case[0], case[1])
-            stateB.load_random()
+            stateB.load_random(0)
             stateA.inplace_copy(stateB)
             assert stateA.content_equal(stateB)
-            stateB.load_random()
+            stateB.load_random(0)
             stateC = GameGridState.copy(stateB)
             assert stateC.content_equal(stateB)
 
@@ -71,7 +72,7 @@ class TestGameGridState:
         cases = [(3, 4), (4, 5)]
         for case in cases:
             state = GameGridState(case[0], case[1])
-            state.load_random()
+            state.load_random(0)
             for i in range(case[0]):
                 for j in range(case[1]):
                     assert state.get((i, j)) != -1
@@ -89,7 +90,7 @@ class TestGameGridState:
         x2 = [0, 1, 2]  
         y2 = [0, 1, 2]
         state = GameGridState(3, 3)
-        state.load_random()
+        state.load_random(0)
         for i in range(3):
             for j in range(3):
                 for k in range(3):
@@ -110,10 +111,11 @@ class TestGameGridState:
         percentage = 0
         for i in range(10):
             percentage += 0.1
+            state.clear()
             state.load_random(percentage)
-            for row in range(0, 10 - int(percentage*10)):
+            for row in range(0, int(percentage*10)):
                 for col in range(0, 5):
                     assert state.get((row, col)) == -1
-            for row in range(10 - int(percentage*10), 10):
+            for row in range(int(percentage*10), 10):
                 for col in range(0, 5):
                     assert state.get((row, col)) != -1

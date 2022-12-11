@@ -2,6 +2,7 @@
 This module contains the inherited game state for the endless 1p mode
 '''
 from sorting_battle_gym.game_state import GameState
+from sorting_battle_gym.game_state import Coord
 
 class Endless1PGameState(GameState):
     '''
@@ -24,6 +25,7 @@ class Endless1PGameState(GameState):
         self.game_board_state = game_board_state
         self.empty_row_percentage = empty_row_percentage
         self.player_callback = None
+        self.init_tasks()
 
     def push_new_row_task(self):
         '''
@@ -62,7 +64,7 @@ class Endless1PGameState(GameState):
         # convert the grid
         # todo : this is a bit ugly. Maybe implement get_gird() in GameGirdState?
         game_grid = self.game_board_state.game_grid_state.grid
-        grid_2d_list = [[tile.number for tile in row] for row in game_grid]
+        grid_2d_list = [[tile.val for tile in row] for row in game_grid]
         # call the player callback
         action_type, coord_list = self.player_callback(
             self.game_over,
@@ -74,9 +76,13 @@ class Endless1PGameState(GameState):
             return
         # handle the action
         action_delay = 0
-        if action_type == 1: # swap
+        if action_type == 0: # idle
+            action_delay = coord_list
+        elif action_type == 1: # swap
             assert len(coord_list) == 2, "coord_list must contain 2 coordinates when swapping"
-            assert self.game_board_state.game_controller_state.swap(coord_list[0], coord_list[1]), "swap not valid"
+            coord1 = Coord(coord_list[0][0], coord_list[0][1])
+            coord2 = Coord(coord_list[1][0], coord_list[1][1])
+            assert self.game_board_state.game_controller_state.swap([coord1, coord2]), "swap not valid"
             action_delay = self.player_swap_delay
             # todo: get the swap is valid or not for the player?
         elif action_type == 2: # select
@@ -109,4 +115,4 @@ class Endless1PGameState(GameState):
         '''
         Load the initial grid with random tiles.
         '''
-        self.game_board_state.game_grid_state.load_random(1-self.empty_row_percentage)
+        self.game_board_state.game_grid_state.load_random(self.empty_row_percentage)

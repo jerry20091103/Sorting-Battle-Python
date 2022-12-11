@@ -1,4 +1,5 @@
 # sorting_battle_gym package
+> NOTE: There is now a interactive terminal version of the game. You can play it by running `python 1p_terminal_game.py` in the **game folder**. 
 ## GameBase class
 ### var
 ```python
@@ -39,6 +40,7 @@ def agent_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     :return action_type, coord_list: 
         action_type: int, 0 for idle, 1 for swap, 2 for select
         coord_list: list of tuple, 
+                    for idle: []
                     for swap: [(row1, column1), (row2, column2)]
                     for select: [(row, column), ...]
     '''

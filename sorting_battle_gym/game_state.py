@@ -121,8 +121,8 @@ class GameState(ABC):
         Add required initial tasks when the game starts.
         Must be called from the subclass.
         '''
-        self.push_task(self.get_tick_between_level_up, self.level_up_task)
-        self.push_task(self.get_tick_between_new_row, self.push_new_row_task)
+        self.push_task(self.get_tick_between_level_up(), self.level_up_task)
+        self.push_task(self.get_tick_between_new_row(), self.push_new_row_task)
 
     def get_tick_between_new_row(self):
         '''

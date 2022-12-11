@@ -97,15 +97,15 @@ class GameGridState:
             for column in range(self.column_count):
                 self.grid[row][column].val = -1
 
-    def load_random(self, row_percentage=1):
+    def load_random(self, empty_row_percentage=1):
         '''
         Load random numbers to the grid.
         :param row_percentage: the percentage of rows that are filled with random numbers.
                                range of the numbers: [0, number_upper_bound).
         '''
-        assert 0 <= row_percentage <= 1
-        row_number = floor(self.row_count * row_percentage)
-        for row in range(self.row_count - row_number, self.row_count):
+        assert 0 <= empty_row_percentage <= 1
+        empty_row_number = floor(self.row_count * empty_row_percentage)
+        for row in range(empty_row_number, self.row_count):
             for column in range(self.column_count):
                 self.grid[row][column].val = random.randrange(0, self.number_upper_bound)
 

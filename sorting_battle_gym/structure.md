@@ -128,8 +128,8 @@
 - bool is_garbage(Coord coord)
 - bool is_number(Coord coord)
 - void clear() # flush to -1
-- void load_random(float row_percentage)
-    - row_percentage: the percentage of rows that are filled with random numbers (leave the rest empty)
+- void load_random(float empty_row_percentage)
+    - empty_row_percentage: the percentage of rows that are empty tiles
     - the random numbers are generated from 0 to number_upper_bound "[0, number_upper_bound)"
 - void load_row(int row_id, list row_values)
 - void load_column(int column_id, list column_values)
@@ -151,7 +151,7 @@
 ### method
 - GameControllerState(GameGridState game_grid_state, GameScoreState game_score_state, int minimum_sorted_length)
 - (int, int) select(list[Coord]) # call selector, and send result to gameScoreState
-- bool swap(Coord coord1, Coord coord2) # call swaper
+- bool swap(list[Coord]) # call swaper
 
 ## SelectHandler
 ### method

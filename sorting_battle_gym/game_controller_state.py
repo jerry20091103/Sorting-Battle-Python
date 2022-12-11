@@ -33,8 +33,7 @@ class GameControllerState:
     def swap(self, coords):
         '''
         Call SwapHandler to swap the tiles at coord1 and coord2, then send result to GameScoreState.
-        :param coord1: the first coord.
-        :param coord2: the second coord.
+        :param coords: a list of 2 coords.
         :return: True if swap is successful, False otherwise.
         '''
         return self.swapper.swap(coords)

@@ -128,7 +128,7 @@ class GameState(ABC):
         '''
         Get the tick between new row.
         '''
-        return int(150 - 90 * np.clip(np.power(self.level/20, 4), 0, 1))
+        return int(round(150 - 90 * np.clip(np.power(self.level/20, 4), 0, 1)))
 
     def get_tick_between_level_up(self):
         '''

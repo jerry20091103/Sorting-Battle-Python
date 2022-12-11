@@ -39,31 +39,36 @@ def player1_callback(game_end, level, grid1, score1, grid2=None, score2=None):
             print(f"{get_tile_char(tile):3}", end="")
         print()
     # get action
-    action_type = int(input("Enter action type (idle:0, swap:1, select:2): "))
-    # idle
-    if action_type == 0:
-        # get delay ticks
-        delay_ticks = int(input("Enter delay in ticks: "))
-        return action_type, delay_ticks
-    # swap
-    if action_type == 1:
-        coord_list = []
-        # get 2 coordinates
-        for i in range(2):
-            coord_x, coord_y = input(f"Enter coord {i} (x y): ").split()
-            coord_list.append([int(coord_x), int(coord_y)])
-        return action_type, coord_list
-    # select
-    if action_type == 2:
-        coord_list = []
-        # input a list of coordinates
-        coord = input("Enter coord (f when done) (x y): ")
-        while coord != "f":
-            coord_x, coord_y = coord.split()
-            coord_list.append([int(coord_x), int(coord_y)])
+    try:
+        action_type = int(input("Enter action type (idle:0, swap:1, select:2): "))
+        # idle
+        if action_type == 0:
+            # get delay ticks
+            delay_ticks = int(input("Enter delay in ticks: "))
+            return action_type, delay_ticks
+        # swap
+        if action_type == 1:
+            coord_list = []
+            # get 2 coordinates
+            for i in range(2):
+                coord_x, coord_y = input(f"Enter coord {i} (x y): ").split()
+                coord_list.append((int(coord_x), int(coord_y)))
+            return action_type, coord_list
+        # select
+        if action_type == 2:
+            coord_list = []
+            # input a list of coordinates
             coord = input("Enter coord (f when done) (x y): ")
-        return action_type, coord_list
-    print("Invalid action type")
+            while coord != "f":
+                coord_x, coord_y = coord.split()
+                coord_list.append((int(coord_x), int(coord_y)))
+                coord = input("Enter coord (f when done) (x y): ")
+            return action_type, coord_list
+    # catch int conversion error
+    except ValueError:
+        print("[ERROR] Invalid input, int() conversion error")
+        return None, None
+    print("[ERROR] Invalid action type")
     return None, None
 
 config = {

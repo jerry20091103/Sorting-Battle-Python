@@ -66,7 +66,7 @@ class Endless1PGameState(GameState):
         game_grid = self.game_board_state.game_grid_state.grid
         grid_2d_list = [[tile.val for tile in row] for row in game_grid]
         # call the player callback
-        action_type, coord_list = self.player_callback(
+        action_type, action_data = self.player_callback(
             self.game_over,
             self.level,
             grid_2d_list,
@@ -75,23 +75,31 @@ class Endless1PGameState(GameState):
         if self.game_over:
             return
         # handle the action
-        action_delay = 0
-        if action_type == 0: # idle
-            action_delay = coord_list
-        elif action_type == 1: # swap
-            assert len(coord_list) == 2, "coord_list must contain 2 coordinates when swapping"
-            coord1 = Coord(coord_list[0][0], coord_list[0][1])
-            coord2 = Coord(coord_list[1][0], coord_list[1][1])
-            assert self.game_board_state.game_controller_state.swap([coord1, coord2]), "swap not valid"
-            action_delay = self.player_swap_delay
-            # todo: get the swap is valid or not for the player?
-        elif action_type == 2: # select
-            assert coord_list is not None, "coord_list must not be None when selecting"
-            (tile_number, garbage_number) = self.game_board_state.game_controller_state.select(coord_list)
-            action_delay = self.player_select_delay
-            assert tile_number > 0, "unsuccesful selection"
-        # schedule the next callback
-        self.push_task(action_delay, self.player_callback_task, player_id)
+        try:
+            action_delay = 0
+            if action_type == 0: # idle
+                action_delay = action_data
+            elif action_type == 1: # swap
+                assert len(action_data) == 2, "action_data must contain 2 coordinates when swapping"
+                coord1 = Coord(action_data[0][0], action_data[0][1])
+                coord2 = Coord(action_data[1][0], action_data[1][1])
+                assert self.game_board_state.game_controller_state.swap([coord1, coord2]), "invalid swap"
+                action_delay = self.player_swap_delay
+                # todo: get the swap is valid or not for the player?
+            elif action_type == 2: # select
+                assert action_data is not None, "action_data must not be None when selecting"
+                (tile_number, garbage_number) = self.game_board_state.game_controller_state.select(action_data)
+                action_delay = self.player_select_delay
+                assert tile_number > 0, "invalid select"
+            # schedule the next callback
+            self.push_task(action_delay, self.player_callback_task, player_id)
+        except AssertionError as e:
+            # pause the game and show the error message
+            print("[ERROR] in player_callback_task:", e)
+            # print action type and data
+            print("action_type:", action_type, ", action_data:", action_data)
+            input("The previous callback wiil be sent again. Press any key to continue...")
+            self.push_task(0, self.player_callback_task, player_id)
 
     def init_tasks(self):
         '''

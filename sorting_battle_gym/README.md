@@ -37,15 +37,14 @@ def agent_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     :param grid2: 2D-list of int, current grid of the opponent where -1 is empty, -2 is garbage, other valid values are >= 0
     :param score2: int, current score of the opponent
     
-    :return action_type, coord_list: 
+    :return action_type, action_data: 
         action_type: int, 0 for idle, 1 for swap, 2 for select
-        coord_list: list of tuple, 
-                    for idle: []
-                    for swap: [(row1, column1), (row2, column2)]
-                    for select: [(row, column), ...]
+        action_data: for idle: int, number of ticks to idle
+                     for swap: list of 2 tuples, [(row1, column1), (row2, column2)]
+                     for select: list of tuples,  [(row, column), ...]
     '''
     # do stuff
-    return action_type, coord_list
+    return action_type, action_data
 ```
 ### Usage
 > The following is an example of how to use the gym in 1P mode
@@ -66,9 +65,9 @@ def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     # the current state is stored to replay memory for future learning
     model_player1.store_state(current_state)
     # convert the action to the format that the gym can understand
-    action_type, coord_list = action...
+    action_type, action_data = action...
     # give the action to the gym
-    return action_type, coord_list
+    return action_type, action_data
 
 # initialize the gym
 config = {
@@ -104,9 +103,9 @@ def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     # the current state is stored to replay memory for future learning
     model_player1.store_state(current_state)
     # convert the action to the format that the gym can understand
-    action_type, coord_list = action...
+    action_type, action_data = action...
     # give the action to the gym
-    return action_type, coord_list
+    return action_type, action_data
 
 # define the callback function for player 2
 def player2_callback(game_end, level, grid1, score1, gird2=None, score2=None):
@@ -120,9 +119,9 @@ def player2_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     # the current state is stored to replay memory for future learning
     model_player2.store_state(current_state)
     # convert the action to the format that the gym can understand
-    action_type, coord_list = action...
+    action_type, action_data = action...
     # give the action to the gym
-    return action_type, coord_list
+    return action_type, action_data
 
 # initialize the gym
 config = {

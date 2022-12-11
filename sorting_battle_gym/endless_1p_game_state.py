@@ -66,12 +66,12 @@ class Endless1PGameState(GameState):
         game_grid = self.game_board_state.game_grid_state.grid
         grid_2d_list = [[tile.val for tile in row] for row in game_grid]
         # call the player callback
-        action_type, action_data = self.player_callback(
-            self.game_over,
-            self.level,
-            grid_2d_list,
-            self.game_board_state.game_score_state.total_score
-        )
+        action_type, action_data = self.player_callback({
+            "game_end": self.game_over,
+            "level": self.level,
+            "grid": grid_2d_list,
+            "score": self.game_board_state.game_score_state.total_score
+        })
         if self.game_over:
             return
         # handle the action

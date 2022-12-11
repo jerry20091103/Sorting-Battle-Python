@@ -1,7 +1,8 @@
 # sorting_battle_gym package
 > NOTE: There is now a interactive terminal version of the game. You can play it by running `python 1p_terminal_game.py` in the **game folder**. 
 ## GameBase class
-### var
+### variables
+- config: dict for GameBase constructor:
 ```python
 dict config {
     'player_count': int # 1 or 2
@@ -9,6 +10,22 @@ dict config {
     'player_select_delay': int # simulated delay for AI in ticks
     'realtime': bool # whether to run the game in realtime
     # Each tick is 1/50 second (0.02 second)
+}
+```
+- game_status: dict passed to the agent callback function in **1P mode**:
+```python
+dict game_status {
+    'game_end': int # 0 for not end, 1 for lose
+    'level': int # current level of game
+    'grid': 2D-list of int # current grid of the player 
+                           # where -1 is empty, -2 is garbage, other valid values are >= 0
+    'score': int # current score of the player
+}
+```
+- game_status_2p: dict passed to the agent callback function in **2P mode**:
+```python
+dict game_status_2p {
+    # TBD
 }
 ```
 ### Public Method
@@ -24,18 +41,9 @@ dict config {
 ```python
 # the callback function should have the following interface
 # This functions is called when it's time for the agent to take action
-def agent_callback(game_end, level, grid1, score1, gird2=None, score2=None):
+def agent_callback(game_status):
     '''
-    :param game_end: int, (for 1P) 0 for not end, 1 for lose
-                     int, (for 2P) 0 for not end, 1 for player 1 wins, 2 for player 2 wins
-    :param level: int, current level of game
-
-    :param grid1: 2D-list of int, current grid of the player where -1 is empty, -2 is garbage, other valid values are >= 0
-    :param score1: int, current score of the player
-
-    (for 2P, the following 3 parameters will not be passed in 1P mode)
-    :param grid2: 2D-list of int, current grid of the opponent where -1 is empty, -2 is garbage, other valid values are >= 0
-    :param score2: int, current score of the opponent
+    :param game_status: dict, the current status of the game (see above)
     
     :return action_type, action_data: 
         action_type: int, 0 for idle, 1 for swap, 2 for select
@@ -55,9 +63,9 @@ from sorting_battle_gym.game_base import GameBase
 model_player1 = Model(...)
 
 # define the callback function
-def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
+def player1_callback(game_state):
     # the model gets the current state of the game
-    current_state = (level, grid1, score1)
+    current_state = game_state...
     # and uses the replay memory as well as the current state to learn
     model_player1.learn(current_state)
     # the model takes action according to current state of the game
@@ -92,10 +100,9 @@ model_player1 = Model(...)
 model_player2 = Model(...)
 
 # define the callback function for player 1
-def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
+def player1_callback(game_state_2p):
     # the model gets the current state of the game
-    # In 2P mode you also get the opponent's (player 2's) grid and score
-    current_state = (level, grid1, score1, grid2, score2)
+    current_state = game_state_2p...
     # and uses the replay memory as well as the current state to learn
     model_player1.learn(current_state)
     # the model takes action according to current state of the game
@@ -108,10 +115,9 @@ def player1_callback(game_end, level, grid1, score1, gird2=None, score2=None):
     return action_type, action_data
 
 # define the callback function for player 2
-def player2_callback(game_end, level, grid1, score1, gird2=None, score2=None):
+def player2_callback(game_state_2p):
     # the model gets the current state of the game
-    # In 2P mode you also get the opponent's (player 1's) grid and score
-    current_state = (level, grid1, socre1, grid2, score2)
+    current_state = game_state_2p...
     # and uses the replay memory as well as the current state to learn
     model_player2.learn(current_state)
     # the model takes according to current state of the game

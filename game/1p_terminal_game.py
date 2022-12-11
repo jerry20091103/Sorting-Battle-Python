@@ -19,14 +19,15 @@ def get_tile_char(tile_val):
         return "  X"
     return "  "+ str(tile_val)
 
-def player1_callback(game_end, level, grid1, score1, grid2=None, score2=None):
+def player1_callback(game_status):
     '''
     Callback to control the player 1 from terminal.
     '''
     # show level and score
     print ("=========================")
-    print("Game End: ", game_end)
-    print("Level: ", level, " Score: ", score1)
+    print("Game End: ", game_status["game_end"])
+    print("Level: ", game_status["level"], " Score: ", game_status["score"])
+    grid1 = game_status["grid"]
     # show grid as well as row and column index
     print("    ", end="")
     for i in range(len(grid1[0])):
@@ -75,7 +76,7 @@ config = {
     'player_count': 1,
     'player_swap_delay': 10,
     'player_select_delay': 50,
-    'realtime': False
+    'realtime': True
 }
 game_base = GameBase(config)
 game_base.set_callback(player1_callback, 1)

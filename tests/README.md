@@ -1,7 +1,7 @@
 # This is the testbench folder for the project.
 ## Linting
 - Linting is done using pylint.
-- Currently, it checks all .py files in the "sorting_battle_gym" folder.
+- Currently, it checks all .py files in the "sorting_battle_gym", "training", "game" folders.
 - To run the linter locally, run `python tests/lint.py` from the root of the project.
     - You need to have pylint installed for this to work. (use `pip install pylint`)
     - check the output of the linter to get a higher score.

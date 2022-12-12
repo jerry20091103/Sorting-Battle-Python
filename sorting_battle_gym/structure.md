@@ -145,6 +145,7 @@
 - np.random_instance
 - GameControllerState game_controller_state
 - GameScoreState game_score_state
+- GamePressureState gamePressureState
 ### method
 - GameBoardState(dict config)
 - bool push_new_row(int number_of_columns)
@@ -239,7 +240,7 @@
 - int max_pressure
 - ~~float pressure_rate~~ (probably for unity, tedious to maintain in python)
 ### method
-- GamePressureState(int maxPressure=40)
+- GamePressureState(int max_pressure=40)
 - int consume_pressure(int amount)
 - void add_pressure(int amount)
 - void attack(GamePressureState other, int attackPower)

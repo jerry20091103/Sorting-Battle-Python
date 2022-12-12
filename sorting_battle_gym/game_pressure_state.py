@@ -3,7 +3,7 @@ class GamePressureState:
     GamePressureState handles a player's pressure state in a game.
     All the related function are implemented here.
     '''
-    def __init__(self, max_pressure):
+    def __init__(self, max_pressure=40):
         '''
         Construct with max_pressure.
         :param max_pressure: the maximum value of pressure.

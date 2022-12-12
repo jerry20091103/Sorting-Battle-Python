@@ -5,7 +5,7 @@ import numpy as np
 from sorting_battle_gym.game_grid_state import GameGridState
 from sorting_battle_gym.game_score_state import GameScoreState
 from sorting_battle_gym.game_controller_state import GameControllerState
-# todo: from sorting_battle_gym.game_pressure_state import GamePressureState
+from sorting_battle_gym.game_pressure_state import GamePressureState
 
 class GameBoardState:
     '''
@@ -45,7 +45,7 @@ class GameBoardState:
             self.game_score_state,
             config['minimum_sorted_length']
         )
-        self.game_pressure_state = None # todo: GamePressureState()
+        self.game_pressure_state = GamePressureState()
 
     def push_new_row(self, number_of_columns):
         '''

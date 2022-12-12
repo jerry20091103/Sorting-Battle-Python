@@ -17,7 +17,7 @@
     - call the run_game() of the game mode
 - void set_callback(callback cb, int player_id=1)
     - call the set_player_callback() of the game mode
-## GameState (abc)
+## GameState (ABC)
 ### var
 - int current_tick
 - queue.PriorityQueue task_queue
@@ -38,7 +38,7 @@
     - task to end the game
     - also clears the scheduler
 - vodi game_end() **(abstract)**
-    - end the game
+    - notify the players that the game is over
 - void push_new_row_task() **(abstract)**
     - task to push new row to the game board
 - void set_player_callback(callback cb, int player_id=1) **(abstract)**
@@ -75,6 +75,59 @@
     - notify the player that the game is over
 - void load_task()
     - task to load the game board with ramdom numbers
+
+## VersusGameState (GameState)
+### PlayerState (subclass)
+#### var
+- GameBoardState game_board_state
+- VersusGameState game_state
+- int last_pressure_tick = 0
+- const int PRESSURE_TICK_DURATION = 120
+- const int MAX_PRESSURE_PER_ATTACK = 20
+- const int GARBAGE_PER_ADDITIONAL_ROW = 10
+#### method
+- PlayerState(VersusGameState game_state, GameBoardState game_board_state)
+- void reset_pressure_tick()
+- void attack(score_increase_info)
+    - needs to be called by GameScoreState when score increases
+- int compute_attack_power(score_increase_info)
+- (int, int) compute_attack_load(int garbage)
+    - returns (num_rows, num_columns)
+- void load_task()
+    - task to load the game board with ramdom numbers
+- void check_recieve_garbage_task()
+    - check if the player needs to recieve garbage from pressure?
+### main class
+#### var
+- List[PlayerState] player_states
+#### method
+- void register_player(GameBoardState game_board_state)
+    - register a new player
+- PlayerState find_target(PlayerState attacker) **(virtual)**
+    - find a valid target for the attacker
+- void on_draw() **(abstract)**
+- void check_game_result_state() **(virtual)**
+    - Method to invoke to check if the game has been decided
+- void push_new_row_task() **(override)**
+    - VersusGameState's PushNewRowEvent implementation. Uses PlayerState.
+- bool check_player_callback() **(override)** ???
+    - check if all player callbacks are set
+- void set_player_callback(callback cb, int player_id=1) **(override)** ???
+    - set the callback for the player
+- void player_callback_task(int player_id) **(override)** ???
+
+## Endless2PGameState (VersusGameState)
+### var
+### method
+- Endless2PGameState(
+    GameBoardState p1_game_board_state, 
+    GameBoardState p2_game_board_state
+    )
+- int get_tick_between_new_row() **(override)**
+    - rows appear less frequently in 2P mode
+- void on_draw() **(override)**
+
+---
 
 ## GameBoardState
 ### var

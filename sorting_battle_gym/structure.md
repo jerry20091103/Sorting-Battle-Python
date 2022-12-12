@@ -234,4 +234,13 @@
 - void on_remove(int remove_count)
 
 ## GamePressureState
-### TODO
+### var
+- int pressure
+- int max_pressure
+- ~~float pressure_rate~~ (probably for unity, tedious to maintain in python)
+### method
+- GamePressureState(int maxPressure=40)
+- int consume_pressure(int amount)
+- void add_pressure(int amount)
+- void attack(GamePressureState other, int attackPower)
+- float get_pressure_rate() # in case anyone need pressure_rate

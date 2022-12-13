@@ -85,12 +85,11 @@
 - const int PRESSURE_TICK_DURATION = 120
 - const int MAX_PRESSURE_PER_ATTACK = 20
 - const int GARBAGE_PER_ADDITIONAL_ROW = 10
-- callback on_win_callback
 - callback player_callback
     - callback to be called when the agent can take action
     - initialize to None
 #### method
-- PlayerState(VersusGameState game_state, GameBoardState game_board_state, callback on_win_callback)
+- PlayerState(VersusGameState game_state, GameBoardState game_board_state)
 - void reset_pressure_tick()
 - void attack(score_increase_info)
     - needs to be called by GameScoreState when score increases
@@ -105,7 +104,7 @@
 #### var
 - List[PlayerState] player_states
 #### method
-- void register_player(GameBoardState game_board_state, callback on_win_callback)
+- void register_player(GameBoardState game_board_state)
     - register a new player
 - PlayerState find_target(PlayerState attacker) **(virtual)**
     - find a valid target for the attacker

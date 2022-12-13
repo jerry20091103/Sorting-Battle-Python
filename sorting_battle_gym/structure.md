@@ -147,6 +147,12 @@
 - GameControllerState game_controller_state
 - GameScoreState game_score_state
 - GamePressureState gamePressureState
+- class Status(enum)
+    - ACTIVE
+    - INACTIVE
+    - WIN
+    - LOSE
+- Status status
 ### method
 - GameBoardState(dict config)
 - bool push_new_row(int number_of_columns)

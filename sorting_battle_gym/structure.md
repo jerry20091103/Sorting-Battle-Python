@@ -86,6 +86,9 @@
 - const int MAX_PRESSURE_PER_ATTACK = 20
 - const int GARBAGE_PER_ADDITIONAL_ROW = 10
 - callback on_win_callback
+- callback player_callback
+    - callback to be called when the agent can take action
+    - initialize to None
 #### method
 - PlayerState(VersusGameState game_state, GameBoardState game_board_state, callback on_win_callback)
 - void reset_pressure_tick()
@@ -109,6 +112,8 @@
 - void on_draw() **(abstract)**
 - void check_game_result_state() **(virtual)**
     - Method to invoke to check if the game has been decided
+- void game_end()
+    - notify the players that the game is over
 - void push_new_row_task() **(override)**
     - VersusGameState's PushNewRowEvent implementation. Uses PlayerState.
 - bool check_player_callback() **(override)** ???
@@ -147,7 +152,7 @@
 - GameControllerState game_controller_state
 - GameScoreState game_score_state
 - GamePressureState gamePressureState
-- class Status(enum)
+- class Status(Enum)
     - ACTIVE
     - INACTIVE
     - WIN

@@ -111,7 +111,7 @@
 - void on_draw() **(abstract)**
 - void check_game_result_state() **(virtual)**
     - Method to invoke to check if the game has been decided
-- void game_end()
+- void game_end() **(override)**
     - notify the players that the game is over
 - void push_new_row_task() **(override)**
     - VersusGameState's PushNewRowEvent implementation. Uses PlayerState.

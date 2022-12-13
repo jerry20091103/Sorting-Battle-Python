@@ -1,5 +1,6 @@
 from sorting_battle_gym.game_state import GameState
 from sorting_battle_gym.game_board_state import GameBoardState
+from abc import abstractmethod
 
 class VersusGameState(GameState):
     '''
@@ -22,4 +23,109 @@ class VersusGameState(GameState):
         super().__init__(player_swap_delay, player_select_delay)
         # class variables
         self.player_states = []
-        # todo ...
+
+    def register_player(self, game_board_state):
+        '''
+        Register a player to the game.
+        :param game_board_state: the game board state of the player.
+        '''
+        self.player_states.append(self.PlayerState(game_board_state))
+
+    def find_target(self, attacker):
+        '''
+        Find a valid target, given an attacking player
+        The default implementation is to return the first player that is not the attacker.
+        Can be overridden by the derived class.
+        :param attacker: PlayerState, the attacking player
+        '''
+        for player in self.player_states:
+            if player != attacker:
+                return player
+        assert False, "no valid target found in versus game"
+
+    @abstractmethod
+    def on_draw(self, screen):
+        '''
+        Draw the game state.
+        :param screen: the pygame screen.
+        '''
+
+    def check_game_result_state(self):
+        '''
+        Method to invoke to check if the game has been decided.
+        The default condition is "last man standing".
+        Can be overridden by the derived class.
+        :return: True if the game has been decided, False otherwise.
+        '''
+        # check all if all players are lost on the same tick
+        # This may happen during a push_new_row_task
+        if all([player.game_board_state.status.LOSE for player in self.player_states]):
+            self.on_draw()
+            return True
+        # if the game is not decided yet...
+        elif all([player.game_board_state.status.ACTIVE 
+                  or player.game_board_state.status.INACTIVE
+                  for player in self.player_states]):
+            return False
+        # if there are some losers...
+        else:
+            survivors = [player for player in self.player_states
+                         if player.game_board_state.status != GameBoardState.Status.LOSE]
+            if len(survivors) == 1:
+                return True
+            else:
+                return False
+
+    def game_end(self):
+        '''
+        notify players that the game is over.
+        '''
+        for i in range(len(self.player_states)):
+            self.push_task(0, self.player_callback_task, i)
+
+    def push_new_row_task(self):
+        '''
+        Add a new row to the game board
+        '''
+        for player in self.player_states:
+            overflow = player.game_board_state.push_new_row(
+                player.game_board_state.game_grid_state.column_count - 1
+            )
+            if overflow:
+                player.game_board_state.status = GameBoardState.Status.LOSE
+        # if the game is over
+        if self.check_game_result_state():
+            self.game_over = True
+            self.game_end()
+            # schedule the last task
+            self.push_task(0, self.game_over_task)
+        # if the game is not over...
+        else:
+            self.push_task(self.get_tick_between_new_row(), self.push_new_row_task)
+
+    def check_player_callback(self):
+        '''
+        Check if all players callbacks are set.
+        '''
+        return all([player.player_callback is not None
+                    for player in self.player_states])
+
+    def set_player_callback(self, callback, player_id=1):
+        '''
+        Set the player callback
+        :param callback: the callback function
+        :param player_id: the player id (starts from 1)
+        '''
+        assert 0 < player_id <= len(self.player_states), "player id out of range"
+        self.player_states[player_id - 1].player_callback = callback
+
+    def player_callback_task(self, player_id):
+        '''
+        The callback task for the player
+        :param player_id: the player id (starts from 1)
+        '''
+        assert 0 < player_id <= len(self.player_states), "player id out of range"
+        # todo ...implement "get_grid()"
+
+
+        

@@ -115,11 +115,10 @@
     - notify the players that the game is over
 - void push_new_row_task() **(override)**
     - VersusGameState's PushNewRowEvent implementation. Uses PlayerState.
-- bool check_player_callback() **(override)** ???
+- bool check_player_callback() **(override)**
     - check if all player callbacks are set
-- void set_player_callback(callback cb, int player_id=1) **(override)** ???
+- void set_player_callback(callback cb, int player_id=1) **(override)**
     - set the callback for the player
-- void player_callback_task(int player_id) **(override)** ???
 
 ## Endless2PGameState (VersusGameState)
 ### var
@@ -131,6 +130,7 @@
 - int get_tick_between_new_row() **(override)**
     - rows appear less frequently in 2P mode
 - void on_draw() **(override)**
+- void player_callback_task(int player_id) **(override)**
 
 ---
 
@@ -199,6 +199,8 @@
 - void load_row(int row_id, list row_values)
 - void load_column(int column_id, list column_values)
 - void load_grid(list grid_values) # gridValues is a 2D-list
+- list[][] get_grid()
+    - returns a 2D-list of tile numbers
 - void pull_down(int column)
 - void swap(Coord coord1, Coord coord2)
 - void swap_and_pull_down(Coord coord1, Coord coord2)

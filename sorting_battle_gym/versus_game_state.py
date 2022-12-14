@@ -1,6 +1,6 @@
+from abc import abstractmethod
 from sorting_battle_gym.game_state import GameState
 from sorting_battle_gym.game_board_state import GameBoardState
-from abc import abstractmethod
 
 class VersusGameState(GameState):
     '''
@@ -82,7 +82,7 @@ class VersusGameState(GameState):
         Register a player to the game.
         :param game_board_state: the game board state of the player.
         '''
-        self.player_states.append(self.PlayerState(game_board_state))
+        self.player_states.append(self.PlayerState(self, game_board_state))
 
     def find_target(self, attacker):
         '''
@@ -97,10 +97,9 @@ class VersusGameState(GameState):
         assert False, "no valid target found in versus game"
 
     @abstractmethod
-    def on_draw(self, screen):
+    def on_draw(self):
         '''
-        Draw the game state.
-        :param screen: the pygame screen.
+        Method to invoke when the game ends in a draw.
         '''
 
     def check_game_result_state(self):
@@ -112,22 +111,20 @@ class VersusGameState(GameState):
         '''
         # check all if all players are lost on the same tick
         # This may happen during a push_new_row_task
-        if all([player.game_board_state.status.LOSE for player in self.player_states]):
+        if all(player.game_board_state.status.LOSE for player in self.player_states):
             self.on_draw()
             return True
         # if the game is not decided yet...
-        elif all([player.game_board_state.status.ACTIVE 
+        if all(player.game_board_state.status.ACTIVE
                   or player.game_board_state.status.INACTIVE
-                  for player in self.player_states]):
+                  for player in self.player_states):
             return False
         # if there are some losers...
-        else:
-            survivors = [player for player in self.player_states
-                         if player.game_board_state.status != GameBoardState.Status.LOSE]
-            if len(survivors) == 1:
-                return True
-            else:
-                return False
+        survivors = [player for player in self.player_states
+                     if player.game_board_state.status != GameBoardState.Status.LOSE]
+        if len(survivors) == 1:
+            return True
+        return False
 
     def game_end(self):
         '''
@@ -160,8 +157,8 @@ class VersusGameState(GameState):
         '''
         Check if all players callbacks are set.
         '''
-        return all([player.player_callback is not None
-                    for player in self.player_states])
+        return all(player.player_callback is not None
+                   for player in self.player_states)
 
     def set_player_callback(self, callback, player_id=1):
         '''
@@ -171,14 +168,3 @@ class VersusGameState(GameState):
         '''
         assert 0 < player_id <= len(self.player_states), "player id out of range"
         self.player_states[player_id - 1].player_callback = callback
-
-    def player_callback_task(self, player_id):
-        '''
-        The callback task for the player
-        :param player_id: the player id (starts from 1)
-        '''
-        assert 0 < player_id <= len(self.player_states), "player id out of range"
-        # todo ...implement "get_grid()"
-
-
-        

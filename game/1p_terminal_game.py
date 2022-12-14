@@ -76,7 +76,7 @@ config = {
     'player_count': 1,
     'player_swap_delay': 10,
     'player_select_delay': 50,
-    'realtime': True
+    'realtime': False
 }
 game_base = GameBase(config)
 game_base.set_callback(player1_callback, 1)

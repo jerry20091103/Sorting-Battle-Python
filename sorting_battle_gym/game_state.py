@@ -76,7 +76,7 @@ class GameState(ABC):
         self.level += 1
         self.push_task(self.get_tick_between_level_up(), self.level_up_task)
 
-    def gamer_over_task(self):
+    def game_over_task(self):
         '''
         Game over. This task will be the last task in the scheduler.
         '''
@@ -136,3 +136,35 @@ class GameState(ABC):
         '''
         return 300
 
+    def handle_player_action(self, player, player_id, action_type, action_data):
+        '''
+        Handle the action from the player.
+        :param player: the player. Contains a GameBoardState
+        :param action_id: the action id.
+        :param action_data: the action data.
+        '''
+        try:
+            action_delay = 0
+            if action_type == 0: # idle
+                action_delay = action_data
+            elif action_type == 1: # swap
+                assert len(action_data) == 2, "action_data must contain 2 coordinates when swapping"
+                coord1 = Coord(action_data[0][0], action_data[0][1])
+                coord2 = Coord(action_data[1][0], action_data[1][1])
+                assert player.game_board_state.game_controller_state.swap([coord1, coord2]), "invalid swap"
+                action_delay = self.player_swap_delay
+                # todo: get the swap is valid or not for the player?
+            elif action_type == 2: # select
+                assert action_data is not None, "action_data must not be None when selecting"
+                (tile_number, garbage_number) = player.game_board_state.game_controller_state.select(action_data)
+                action_delay = self.player_select_delay
+                assert tile_number > 0, "invalid select"
+            # schedule the next callback
+            self.push_task(action_delay, self.player_callback_task, player_id)
+        except AssertionError as e:
+            # pause the game and show the error message
+            print("[ERROR] in player_callback_task:", e)
+            # print action type and data
+            print("action_type:", action_type, ", action_data:", action_data)
+            input("The previous callback wiil be sent again. Press any key to continue...")
+            self.push_task(0, self.player_callback_task, player_id)

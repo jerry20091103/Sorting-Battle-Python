@@ -13,6 +13,59 @@ class VersusGameState(GameState):
         '''
         # todo ...
         # * class constants does not need "self."
+
+        def __init__(self, game_state, game_board_state):
+            '''
+            class constructor
+            :param game_state: the GameState object, should be its own parent
+            :param game_board_state: the GameBoardState object of the player
+            '''
+            pass
+
+        def reset_pressure_tick(self):
+            '''
+            in unity:
+            // ! This is invoked whenever the player's pressure changed.
+            // ! Together with "PressureTickDuration", this makes each ReceiveTrashEvent
+            // ! happen at least PressureTickDuration apart.
+            '''
+            pass
+
+        def attack(self, score_increase_info):
+            '''
+            Attack the other player.
+            This function needs to be called by GameScoreState when the score increase.
+            :param score_increase_info: TBE
+            '''
+            pass
+
+        def compute_attack_power(self, score_increase_info):
+            '''
+            Compute the attack power.
+            :param score_increase_info: TBE
+            :return: the attack power
+            '''
+            pass
+
+        def compute_attack_load(self, garbage):
+            '''
+            Compute the attack load.
+            :param garbage: int, TBE
+            :return: (int: num_rows, int: num_columns), TBE
+            '''
+            pass
+
+        def load_task(self):
+            '''
+            Task to load the game board with random numbers.
+            '''
+            pass
+
+        def check_receive_garbage_task(self):
+            '''
+            Check if the player needs to receive garbage from pressure?
+            '''
+            pass
     
     def __init__(self, player_swap_delay, player_select_delay):
         '''

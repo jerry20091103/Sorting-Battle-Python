@@ -94,12 +94,12 @@
 - void attack(score_increase_info)
     - needs to be called by GameScoreState when score increases
 - int compute_attack_power(score_increase_info)
-- (int, int) compute_attack_load(int garbage)
-    - returns (num_rows, num_columns)
+- (int, int) compute_attack_load(int pressure_consumed)
+    - returns (num_garbage_rows, num_garbage_columns)
 - void load_task()
     - task to load the game board with ramdom numbers
 - void check_recieve_garbage_task()
-    - check if the player needs to recieve garbage from pressure?
+    - check if the player needs to recieve garbage from pressure
 ### main class
 #### var
 - List[PlayerState] player_states

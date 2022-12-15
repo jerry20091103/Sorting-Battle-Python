@@ -90,6 +90,7 @@
     - initialize to None
 #### method
 - PlayerState(VersusGameState game_state, GameBoardState game_board_state)
+    - remember to set attack() into on_score_increase_callback in GameScoreState
 - void reset_pressure_tick()
 - void attack(score_increase_info)
     - needs to be called by GameScoreState when score increases
@@ -243,9 +244,16 @@
     int minimum_remove_count, base_remove_score, max_effective_combo, remove_length_bonus
     float combo_score_step
 }
+- list on_score_increase_callback
+    - callback functions like attack() can be placed here
+    - initialize to empty list
 ### method
 - GameScoreState(dict config)
 - void on_remove(int remove_count)
+    - This method should be called when a remove is made
+- void register_combo(int remove_count)
+- void reset_combo()
+- void set_score_increase_callback(callback cb)
 
 ## GamePressureState
 ### var

@@ -1,7 +1,7 @@
 from abc import abstractmethod
+import numpy as np
 from sorting_battle_gym.game_state import GameState
 from sorting_battle_gym.game_board_state import GameBoardState
-import numpy as np
 
 class VersusGameState(GameState):
     '''
@@ -113,7 +113,6 @@ class VersusGameState(GameState):
             else:
                 self.game_state.push_task(1, self.check_receive_garbage_task)
 
-    
     def __init__(self, player_swap_delay, player_select_delay):
         '''
         class constructor

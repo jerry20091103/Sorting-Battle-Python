@@ -232,4 +232,3 @@ class GameGridState:
                 if self.grid[row][column].val != other.grid[row][column].val:
                     return False
         return True
-    

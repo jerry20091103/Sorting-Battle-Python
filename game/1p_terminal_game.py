@@ -4,8 +4,8 @@ Also serves as an example of how to use the gym
 '''
 # add include path
 import sys
-sys.path.append("../")
 from sorting_battle_gym.game_base import GameBase
+sys.path.append("../")
 
 def get_tile_char(tile_val):
     '''

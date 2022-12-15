@@ -54,7 +54,7 @@ class GameBase:
     def set_callback(self, callback, player_id=1):
         '''
         sets the callback function to be called when the player can take action
-        :param callback: the callback function 
+        :param callback: the callback function
                          (refer to the README for the callback function signature)
         :param player_id: the player id (1 or 2)
         '''

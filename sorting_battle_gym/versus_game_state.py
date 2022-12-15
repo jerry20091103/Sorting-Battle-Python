@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from sorting_battle_gym.game_state import GameState
 from sorting_battle_gym.game_board_state import GameBoardState
+import numpy as np
 
 class VersusGameState(GameState):
     '''
@@ -11,8 +12,9 @@ class VersusGameState(GameState):
         '''
         This class represents a player in VersusGameState.
         '''
-        # todo ...
-        # * class constants does not need "self."
+        PRESSURE_TICK_DURATION = 120
+        MAX_PRESSURE_PER_ATTACK = 20
+        GARBAGE_PER_ADDITIONAL_ROW = 10
 
         def __init__(self, game_state, game_board_state):
             '''
@@ -20,52 +22,87 @@ class VersusGameState(GameState):
             :param game_state: the GameState object, should be its own parent
             :param game_board_state: the GameBoardState object of the player
             '''
-            pass
+            self.game_state = game_state
+            self.game_board_state = game_board_state
+            self.last_pressure_tick = 0
+            self.player_callback = None
+            # Load per-player events here.
+            self.game_state.push_task(0, self.load_task)
+            self.game_state.push_task(1, self.check_receive_garbage_task)
 
         def reset_pressure_tick(self):
             '''
-            in unity:
-            // ! This is invoked whenever the player's pressure changed.
-            // ! Together with "PressureTickDuration", this makes each ReceiveTrashEvent
-            // ! happen at least PressureTickDuration apart.
+            Reset player's pressure tick.
+            This function needs to be called when pressure changes.
             '''
-            pass
+            self.last_pressure_tick = self.game_state.tick
 
         def attack(self, score_increase_info):
             '''
             Attack the other player.
-            This function needs to be called by GameScoreState when the score increase.
-            :param score_increase_info: TBE
+            !!! This function needs to be called by GameScoreState when the score increase.
+            :param score_increase_info: tuple(score_increase, remove_count, combo)
             '''
             pass
 
         def compute_attack_power(self, score_increase_info):
             '''
             Compute the attack power.
-            :param score_increase_info: TBE
+            :param score_increase_info: tuple(score_increase, remove_count, combo)
             :return: the attack power
             '''
-            pass
+            remove_count = score_increase_info[1]
+            combo = score_increase_info[2]
+            return int(remove_count + combo / 2)
 
-        def compute_attack_load(self, garbage):
+        def compute_attack_load(self, pressure_consumed):
             '''
-            Compute the attack load.
-            :param garbage: int, TBE
-            :return: (int: num_rows, int: num_columns), TBE
+            Compute the attack load based on the consumed pressure.
+            :param pressure_consumed: the consumed pressure
+            :return: (int: num_garbage_rows, int: num_garbage_columns)
             '''
-            pass
+            if pressure_consumed > 0:
+                num_garbage_rows = 1 + pressure_consumed // VersusGameState.PlayerState.GARBAGE_PER_ADDITIONAL_ROW
+                # lerp(1, 4, pressure_consumed % 10 / 10)
+                column_count = self.game_board_state.game_grid_state.column_count
+                pressure_ramainder = pressure_consumed % VersusGameState.PlayerState.GARBAGE_PER_ADDITIONAL_ROW
+                num_garbage_columns = int(round(1 + (column_count - 2) * np.clip( float(pressure_ramainder)/float(10), 0, 1)))
+            else:
+                num_garbage_rows = 0
+                num_garbage_columns = 0
+            return num_garbage_rows, num_garbage_columns
 
         def load_task(self):
             '''
             Task to load the game board with random numbers.
             '''
-            pass
+            self.game_board_state.game_grid_state.load_random(0.8)
 
         def check_receive_garbage_task(self):
             '''
-            Check if the player needs to receive garbage from pressure?
+            Check if the player needs to receive garbage from pressure.
             '''
-            pass
+            overflow = False
+            # if time exceeds the pressure tick duration
+            if self.game_state.tick - self.last_pressure_tick >= VersusGameState.PlayerState.PRESSURE_TICK_DURATION:
+                # Can dump garbage from pressure.
+                pressure_consumed = self.game_board_state.game_pressure_state.consume_pressure(VersusGameState.PlayerState.MAX_PRESSURE_PER_ATTACK)
+                garbage_rows, garbage_columns = self.compute_attack_load(pressure_consumed)
+                if garbage_rows > 0:
+                    overflow = self.game_board_state.push_garbage_rows(garbage_rows, garbage_columns)
+                # Because we consumed pressure, we have to reset pressure tick here.
+                self.reset_pressure_tick()
+            # after garbage is received, check if the game is over
+            if overflow:
+                self.game_board_state.status = GameBoardState.Status.LOSE
+                if self.game_state.check_game_result_state():
+                    self.game_state.game_over = True
+                    self.game_state.game_end()
+                    # schedule the last task
+                    self.game_state.push_task(0, self.game_state.game_over_task)
+            else:
+                self.game_state.push_task(1, self.check_receive_garbage_task)
+
     
     def __init__(self, player_swap_delay, player_select_delay):
         '''

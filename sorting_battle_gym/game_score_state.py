@@ -28,6 +28,8 @@ class GameScoreState:
         self.max_effective_combo = config['max_effective_combo']
         self.remove_length_bonus = config['remove_length_bonus']
         self.combo_score_step = config['combo_score_step']
+        # callback functions for versus game
+        self.on_score_increase_callback = []
 
     def on_remove(self, remove_count):
         '''
@@ -51,6 +53,9 @@ class GameScoreState:
                               )
         self.total_score += plus_score
         self.combo_score_buffer += plus_score
+        # call callback functions to attack other players
+        for callback in self.on_score_increase_callback:
+            callback((plus_score, remove_count, self.effective_combo))
 
     def reset_combo(self):
         '''
@@ -60,3 +65,10 @@ class GameScoreState:
         self.combo = 0
         self.effective_combo = 0
         self.combo_score_buffer = 0
+
+    def set_score_increase_callback(self, callback):
+        '''
+        Set the callback function for score increase.
+        :param callback: the callback function
+        '''
+        self.on_score_increase_callback.append(callback)

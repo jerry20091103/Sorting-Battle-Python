@@ -29,6 +29,8 @@ class VersusGameState(GameState):
             # Load per-player events here.
             self.game_state.push_task(0, self.load_task)
             self.game_state.push_task(1, self.check_receive_garbage_task)
+            # set attack() as the callback function for score increase
+            self.game_board_state.game_score_state.set_score_increase_callback(self.attack)
 
         def reset_pressure_tick(self):
             '''
@@ -40,10 +42,18 @@ class VersusGameState(GameState):
         def attack(self, score_increase_info):
             '''
             Attack the other player.
-            !!! This function needs to be called by GameScoreState when the score increase.
+            This function needs to be called by GameScoreState when the score increase.
             :param score_increase_info: tuple(score_increase, remove_count, combo)
             '''
-            pass
+            # Find a target to attack.
+            target = self.game_state.find_target(self)
+            # Use GamePressureState.Attack to transfer pressure to target.
+            self.game_board_state.game_pressure_state.attack( \
+                other = target.game_board_state.game_pressure_state, \
+                attack_power = self.compute_attack_power(score_increase_info) \
+            )
+            # Reset target's pressure tick.
+            target.reset_pressure_tick()
 
         def compute_attack_power(self, score_increase_info):
             '''

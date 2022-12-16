@@ -28,6 +28,7 @@ class VersusGameState(GameState):
             self.player_callback = None
             # Load per-player events here.
             self.game_state.push_task(0, self.load_task)
+            # todo: push player callback task here?
             self.game_state.push_task(1, self.check_receive_garbage_task)
             # set attack() as the callback function for score increase
             self.game_board_state.game_score_state.set_score_increase_callback(self.attack)
@@ -37,7 +38,7 @@ class VersusGameState(GameState):
             Reset player's pressure tick.
             This function needs to be called when pressure changes.
             '''
-            self.last_pressure_tick = self.game_state.tick
+            self.last_pressure_tick = self.game_state.current_tick
 
         def attack(self, score_increase_info):
             '''
@@ -94,7 +95,7 @@ class VersusGameState(GameState):
             '''
             overflow = False
             # if time exceeds the pressure tick duration
-            if self.game_state.tick - self.last_pressure_tick >= VersusGameState.PlayerState.PRESSURE_TICK_DURATION:
+            if self.game_state.current_tick - self.last_pressure_tick >= VersusGameState.PlayerState.PRESSURE_TICK_DURATION:
                 # Can dump garbage from pressure.
                 pressure_consumed = self.game_board_state.game_pressure_state.consume_pressure(VersusGameState.PlayerState.MAX_PRESSURE_PER_ATTACK)
                 garbage_rows, garbage_columns = self.compute_attack_load(pressure_consumed)

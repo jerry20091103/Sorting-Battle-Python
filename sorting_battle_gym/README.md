@@ -25,7 +25,14 @@ dict game_status {
 - game_status_2p: dict passed to the agent callback function in **2P mode**:
 ```python
 dict game_status_2p {
-    # TBD
+    'game_end': int # 0 for not end, 1 for lose
+    'level': int # current level of game
+    'grid': 2D-list of int # current grid of the player 
+                           # where -1 is empty, -2 is garbage, other valid values are >= 0
+    'score': int # current score of the player
+    'opponent_grid': 2D-list of int # current grid of the opponent
+                                    # where -1 is empty, -2 is garbage, other valid values are >= 0
+    'opponent_score': int # current score of the opponent
 }
 ```
 ### Public Method

@@ -21,9 +21,9 @@ class Endless2PGameState(VersusGameState):
         '''
         # call base class constructor
         super().__init__(player_swap_delay, player_select_delay)
+        self.init_tasks()
         self.register_player(p1_game_board_state)
         self.register_player(p2_game_board_state)
-        self.init_tasks()
 
     def get_tick_between_new_row(self):
         '''

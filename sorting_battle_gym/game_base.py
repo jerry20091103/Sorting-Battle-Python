@@ -4,6 +4,7 @@ Only this module should be imported by outside code.
 '''
 from sorting_battle_gym.game_board_state import GameBoardState
 from sorting_battle_gym.endless_1p_game_state import Endless1PGameState
+from sorting_battle_gym.endless_2p_game_state import Endless2PGameState
 
 class GameBase:
     '''
@@ -39,8 +40,9 @@ class GameBase:
             game_board = GameBoardState(GameBase.game_board_config)
             self.game_state = Endless1PGameState(game_board, config['player_swap_delay'], config['player_select_delay'])
         elif self.player_count == 2:
-            raise NotImplementedError
-            # TODO implement 2P game
+            p1_game_board = GameBoardState(GameBase.game_board_config)
+            p2_game_board = GameBoardState(GameBase.game_board_config)
+            self.game_state = Endless2PGameState(p1_game_board, p2_game_board, config['player_swap_delay'], config['player_select_delay'])
         else:
             raise ValueError('player_count must be 1 or 2')
 

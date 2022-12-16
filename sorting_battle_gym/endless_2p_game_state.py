@@ -24,6 +24,10 @@ class Endless2PGameState(VersusGameState):
         self.init_tasks()
         self.register_player(p1_game_board_state)
         self.register_player(p2_game_board_state)
+        # push player_callback_tack after 2 players are both registered
+        # because the p2 board should be loaded before p1 take the first turn
+        self.push_task(1, self.player_callback_task, 1)
+        self.push_task(1, self.player_callback_task, 2)
 
     def get_tick_between_new_row(self):
         '''

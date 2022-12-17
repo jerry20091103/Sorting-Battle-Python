@@ -83,7 +83,7 @@ class Endless1PGameState(GameState):
         # load the initial grid
         self.push_task(0, self.load_task)
         # schedule first player callback
-        self.push_task(0, self.player_callback_task, 1)
+        self.push_task(1, self.player_callback_task, 1)
 
     def game_end(self):
         '''

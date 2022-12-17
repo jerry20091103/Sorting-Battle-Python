@@ -1,5 +1,5 @@
 # sorting_battle_gym package
-> NOTE: There is now a interactive terminal version of the game. You can play it by running `python 1p_terminal_game.py` in the **game folder**. 
+> NOTE: There is now a interactive terminal version of the game. You can play it by running `python 1p_terminal_game.py` or `python 2p_terminal_game.py` in the **game folder**. 
 ## GameBase class
 ### variables
 - config: dict for GameBase constructor:

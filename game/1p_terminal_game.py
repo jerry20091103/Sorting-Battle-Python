@@ -12,7 +12,7 @@ def player1_callback(game_status):
     '''
     Callback to control the player 1 from terminal.
     '''
-    show_game_status(game_status['game_end'], game_status['level'], game_status['score'], game_status['grid'])
+    show_game_status(False, game_status['game_end'], game_status['level'], game_status['score'], game_status['grid'])
     # get action
     return get_action_from_terminal()
 

@@ -53,6 +53,7 @@ class GameState(ABC):
             if realtime:
                 sleep((task.tick - self.current_tick) * 0.02)
             self.current_tick = task.tick
+            # todo: remove print tick later.
             print('# tick:', self.current_tick, task.callback.__name__)
             task.callback(*task.args, **task.kwargs)
             if self.end_scheduler:
@@ -153,7 +154,6 @@ class GameState(ABC):
                 coord2 = Coord(action_data[1][0], action_data[1][1])
                 assert player.game_board_state.game_controller_state.swap([coord1, coord2]), "invalid swap"
                 action_delay = self.player_swap_delay
-                # todo: get the swap is valid or not for the player?
             elif action_type == 2: # select
                 assert action_data is not None, "action_data must not be None when selecting"
                 (tile_number, garbage_number) = player.game_board_state.game_controller_state.select(action_data)

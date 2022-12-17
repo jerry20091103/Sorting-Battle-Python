@@ -28,7 +28,6 @@ class VersusGameState(GameState):
             self.player_callback = None
             # Load per-player events here.
             self.game_state.push_task(0, self.load_task)
-            # todo: push player callback task here?
             self.game_state.push_task(1, self.check_receive_garbage_task)
             # set attack() as the callback function for score increase
             self.game_board_state.game_score_state.set_score_increase_callback(self.attack)

@@ -14,22 +14,26 @@ def get_tile_char(tile_val):
         return "  X"
     return "  "+ str(tile_val)
 
-def show_game_status(game_end, level, score, grid):
+def show_game_status(add_tab, game_end, level, score, grid, pressure=None):
     '''
     print out the game status in terminal for one player.
     '''
+    tabs = '\t\t\t\t\t' if add_tab else ''
     # show level and score
-    print ("=========================")
-    print("Game End: ", game_end)
-    print("Level: ", level, " Score: ", score)
+    print (tabs, "=========================")
+    print(tabs, "Game End: ", game_end)
+    print(tabs, "Level: ", level, " Score: ", score)
+    # show pressure
+    if pressure is not None:
+        print(tabs, "Pressure: ", pressure)
     # show grid as well as row and column index
-    print("    ", end="")
+    print(tabs, "    ", end="")
     for i in range(len(grid[0])):
         print(f"{i:3}", end="")
     print()
-    print("    " + "-" * (len(grid[0]) * 3))
+    print(tabs, "    " + "-" * (len(grid[0]) * 3))
     for i in range(len(grid)):
-        print(f"{i:3}", end="|")
+        print(tabs, f"{i:3}", end="|")
         for tile in grid[i]:
             print(f"{get_tile_char(tile):3}", end="")
         print()

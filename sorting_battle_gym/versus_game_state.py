@@ -158,18 +158,20 @@ class VersusGameState(GameState):
         '''
         # check all if all players are lost on the same tick
         # This may happen during a push_new_row_task
-        if all(player.game_board_state.status.LOSE for player in self.player_states):
+        if all(player.game_board_state.status == GameBoardState.Status.LOSE for player in self.player_states):
+            print('Game ends in a draw.')
             self.on_draw()
             return True
         # if the game is not decided yet...
-        if all(player.game_board_state.status.ACTIVE
-                  or player.game_board_state.status.INACTIVE
+        if all(player.game_board_state.status == GameBoardState.Status.ACTIVE
+                  or player.game_board_state.status == GameBoardState.Status.INACTIVE
                   for player in self.player_states):
             return False
         # if there are some losers...
         survivors = [player for player in self.player_states
                      if player.game_board_state.status != GameBoardState.Status.LOSE]
         if len(survivors) == 1:
+            print("one player wins")
             return True
         return False
 
@@ -178,7 +180,7 @@ class VersusGameState(GameState):
         notify players that the game is over.
         '''
         for i in range(len(self.player_states)):
-            self.push_task(0, self.player_callback_task, i)
+            self.push_task(0, self.player_callback_task, i + 1)
 
     def push_new_row_task(self):
         '''

@@ -3,7 +3,7 @@ This module contains the Endless2PGameState class, which is a child of VersusGam
 '''
 import numpy as np
 from sorting_battle_gym.versus_game_state import VersusGameState
-from sorting_battle_gym.game_state import Coord
+from sorting_battle_gym.game_board_state import GameBoardState
 
 class Endless2PGameState(VersusGameState):
     '''
@@ -46,7 +46,7 @@ class Endless2PGameState(VersusGameState):
         The callback task for the player
         :param player_id: the player id (starts from 1)
         '''
-        assert 0 < player_id <= 2, "player id needs to be 1 or 2"
+        assert 0 < player_id <= 2, "player id needs to be 1 or 2 current id:" + str(player_id)
         current_player = self.player_states[player_id - 1]
         oppoent_id = 1 if player_id == 2 else 2
         opponent_player = self.player_states[oppoent_id - 1]
@@ -56,8 +56,11 @@ class Endless2PGameState(VersusGameState):
             'level': self.level,
             'grid': current_player.game_board_state.game_grid_state.get_grid(),
             'score': current_player.game_board_state.game_score_state.total_score,
+            'pressure': current_player.game_board_state.game_pressure_state.pressure,
             'opponent_grid': opponent_player.game_board_state.game_grid_state.get_grid(),
             'opponent_score': opponent_player.game_board_state.game_score_state.total_score,
+            'opponent_pressure': opponent_player.game_board_state.game_pressure_state.pressure,
+            'win_flag': int(current_player.game_board_state.status != GameBoardState.Status.LOSE)
         })
         if self.game_over:
             return

@@ -2,7 +2,6 @@
 This module contains the inherited game state for the endless 1p mode
 '''
 from sorting_battle_gym.game_state import GameState
-from sorting_battle_gym.game_state import Coord
 
 class Endless1PGameState(GameState):
     '''

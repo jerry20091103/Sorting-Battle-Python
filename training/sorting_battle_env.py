@@ -21,24 +21,21 @@ class SortingBattleEnv(Env):
         self.board = GameGridState(self.field_size['row'], self.field_size['col'])
         
         # TODO
-        self.observation_shape = (0, 0, 0)
-        self.observation_space = spaces.Box(low = np.zeros(self.observation_shape), 
-                                            high = np.ones(self.observation_shape),
-                                            dtype = np.float16)
+        self.observation_shape = (1, 5)
+        self.observation_space = spaces.Box(-1, 1, (2, ), dtype=np.float64)
         # TODO
-        self.action_space = spaces.Discrete(0)
+        self.action_space = spaces.Discrete(9)
 
     @property
     def observation(self):
         '''
         Calculate observation.
-        self.observation
         :return: observations
         '''
         # TODO
-        position = np.array([])
-        legal_actions = np.array(self.legal_actions).reshape(0, 0)
-        obs = np.stack([position,legal_actions], axis = -1)
+        position = np.zeros(self.observation_shape)
+        legal_actions = np.zeros(self.observation_shape)
+        obs = np.array([0., 0.5])
         return obs
 
     @property
@@ -48,7 +45,7 @@ class SortingBattleEnv(Env):
         :return: all legal actions
         '''
         # TODO
-        legal_actions = []
+        legal_actions = [0 for _ in range(9)]
         return np.array(legal_actions)
 
     def check_game_over(self):

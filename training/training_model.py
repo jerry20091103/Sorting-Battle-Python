@@ -1,22 +1,24 @@
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions import MultivariateNormal
-from sorting_battle_gym.game_board_state import GameBoardState              # load_grid
-from sorting_battle_gym.game_controller_state import GameControllerState    # select() -> (0, 0) invalid
-                                                                            # swap() -> True/False
-from sorting_battle_gym.game_base import GameBase
-import numpy as np
 
+from sorting_battle_gym.game_board_state import GameBoardState              # load_grid
+from sorting_battle_gym.game_controller_state import GameControllerState    # select() -> (0, 0) invalid                                                                   # swap() -> True/False
+from sorting_battle_gym.game_base import GameBase
+
+# model settings
 V_LR=1e-4
 P_LR=1e-4
 GAMMA=0.99
 UPDATE_NUM=4
-UPDATE_INTERVAL=8
 EPSILON=0.2
-EPISODE_NUM = 100
+
 ACTION_SWAP = 1
 ACTION_SELECT = 2
+ACTION_ADD_LINE = 1440
+MAX_NEGATIVE_REWARD = -10000
 
 game_board_config = {
   'seed' : None,
@@ -71,7 +73,7 @@ class ppo_agent():
         self.value_optimizer = torch.optim.Adam(self.value_network.parameters(), lr = V_LR)
 
         # other vars
-        self.prev_state = None
+        self.prev_score = 0
 
     def act(self, state):
         self.counter += 1
@@ -94,7 +96,7 @@ class ppo_agent():
         action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float).cuda()
         log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float).cuda()
         # state = torch.tensor(self.buffer.states, dtype=torch.float)
-        # action = torch.tensor(self.buffer.actions, dtype=torch.float)
+        # action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float)
         # log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float)
 
         '''step 4: compute rewards_to_go'''
@@ -146,7 +148,6 @@ def is_legal_action(action_type, action_data, game_state_grid):
   """
   game_board_state = GameBoardState(game_board_config)
   game_board_state.game_grid_state.load_grid(game_state_grid)
-  # print(f'action_type: {action_type}, action_data: {action_data}')
   try:
     if action_type == ACTION_SELECT:
       return game_board_state.game_controller_state.select(action_data)[0] > 0
@@ -155,63 +156,7 @@ def is_legal_action(action_type, action_data, game_state_grid):
   except:
     return False
 
-# def trans_act(action):
-def trans_act(action, grid, CHOOSE_LEGAL=True):
-  # print(action.argmax())
-  # la = np 0, 0, 1, ... only check boundary
-  # action[la == 0] = 0
-  legal_action_space = []
-  for i in range(len(action)):
-    action_id = i
-    action_type = 1
-    action_data = [[8, 0], [9, 0]]
-    pos_id = action_id // 32
-    move_id = action_id % 32
-    move_dir = move_id // 8
-    move_type = move_id % 8
-
-    action_data[0][0] = pos_id // 5
-    action_data[0][1] = pos_id % 5
-    
-    if move_type == 0:
-      action_type = ACTION_SWAP
-      if move_dir == 0:
-        action_data[1][0] =  action_data[0][0]
-        action_data[1][1] =  action_data[0][1] - 1
-      if move_dir == 1:
-        action_data[1][0] =  action_data[0][0]
-        action_data[1][1] =  action_data[0][1] + 1
-      if move_dir == 2:
-        action_data[1][0] =  action_data[0][0] - 1
-        action_data[1][1] =  action_data[0][1]
-      if move_dir == 3:
-        action_data[1][0] =  action_data[0][0] + 1
-        action_data[1][1] =  action_data[0][1]
-    else:
-      action_type = ACTION_SELECT
-      action_data = [[pos_id // 5, pos_id % 5]] # [[], [], []]
-      for i in range(1, move_type+2):
-        if move_dir == 0:
-          action_data.append([action_data[-1][0], action_data[-1][1] - 1])
-        if move_dir == 1:
-          action_data.append([action_data[-1][0], action_data[-1][1] + 1])
-        if move_dir == 2:
-          action_data.append([action_data[-1][0] - 1, action_data[-1][1]])
-        if move_dir == 3:
-          action_data.append([action_data[-1][0] + 1, action_data[-1][1]])
-    
-    if is_legal_action(action_type, action_data, grid):
-      legal_action_space.append(action[i])
-    else:
-      legal_action_space.append(-10000)
-    
-  legal_action_space = np.array(legal_action_space)
-
-  # original code
-  if CHOOSE_LEGAL:
-    action_id = legal_action_space.argmax()
-  else:
-    action_id = action.argmax()
+def trans_action_id(action_id):
   action_type = 1
   action_data = [[8, 0], [9, 0]]
   pos_id = action_id // 32
@@ -221,7 +166,12 @@ def trans_act(action, grid, CHOOSE_LEGAL=True):
 
   action_data[0][0] = pos_id // 5
   action_data[0][1] = pos_id % 5
-  
+
+  if action_id == ACTION_ADD_LINE:
+    action_type = 3
+    action_data = None
+    return action_type, action_data
+    
   if move_type == 0:
     action_type = ACTION_SWAP
     if move_dir == 0:
@@ -238,7 +188,7 @@ def trans_act(action, grid, CHOOSE_LEGAL=True):
       action_data[1][1] =  action_data[0][1]
   else:
     action_type = ACTION_SELECT
-    action_data = [[pos_id // 5, pos_id % 5]] # [[], [], []]
+    action_data = [[pos_id // 5, pos_id % 5]]
     for i in range(1, move_type+2):
       if move_dir == 0:
         action_data.append([action_data[-1][0], action_data[-1][1] - 1])
@@ -252,3 +202,27 @@ def trans_act(action, grid, CHOOSE_LEGAL=True):
   return action_type, action_data
 
 
+def select_act(action, grid, CHOOSE_LEGAL=True):
+  if CHOOSE_LEGAL:
+    legal_action_space = []
+    for i in range(len(action)):
+      action_type, action_data = trans_action_id(i)
+      if is_legal_action(action_type, action_data, grid):
+        legal_action_space.append(action[i])
+      else:
+        # make sure won't be selected
+        legal_action_space.append(MAX_NEGATIVE_REWARD)
+
+    legal_action_space = np.array(legal_action_space)
+    action_id = legal_action_space.argmax()
+    
+    # if there is no legal action, idle
+    if action_id == 0:
+      action_type = 0
+      action_data = 10
+      return action_type, action_data
+  else:
+    action_id = action.argmax()
+  
+  action_type, action_data = trans_action_id(action_id)
+  return action_type, action_data

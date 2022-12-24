@@ -44,7 +44,7 @@ def get_action_from_terminal():
     :return: the action type and the action parameters.
     '''
     try:
-        action_type = int(input("Enter action type (idle:0, swap:1, select:2): "))
+        action_type = int(input("Enter action type (idle:0, swap:1, select:2, add_new_row:3): "))
         # idle
         if action_type == 0:
             # get delay ticks
@@ -68,6 +68,8 @@ def get_action_from_terminal():
                 coord_list.append((int(coord_x), int(coord_y)))
                 coord = input("Enter coord (f when done) (x y): ")
             return action_type, coord_list
+        if action_type == 3:
+            return action_type, []
     # catch int conversion error
     except ValueError:
         print("[ERROR] Invalid input, int() conversion error")

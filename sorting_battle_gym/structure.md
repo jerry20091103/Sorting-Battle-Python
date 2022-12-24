@@ -5,6 +5,7 @@
     - int player_count
     - int player_swap_delay 
     - int player_select_delay
+    - int player_add_new_row_delay
     - bool realtime
 }
 - int player_count
@@ -26,7 +27,7 @@
 - int level
 - bool game_over
 ### method
-- GameState(player_swap_delay, player_select_delay) **(abstract)**
+- GameState(player_swap_delay, player_select_delay, player_add_new_row_delay) **(abstract)**
 - void run_game(bool realtime)
     - a blocking function that runs the game until it ends.
     - runs the scheduler to execute tasks
@@ -41,6 +42,8 @@
     - notify the players that the game is over
 - void push_new_row_task() **(abstract)**
     - task to push new row to the game board
+- void push_one_row_task() **(abstract)**
+    - task to push one row for the player
 - void set_player_callback(callback cb, int player_id=1) **(abstract)**
     - sets the callback function to be called when the player can take action
 - bool check_player_callback() **(abstract)**
@@ -60,8 +63,9 @@
 - float empty_row_percentage = 0.8
 - callback player_callback
 ### methods
-- Endless1PGameState(GameBoardState game_board_state, int player_swap_delay, int player_select_delay, float empty_row_percentage=0.8)
+- Endless1PGameState(GameBoardState game_board_state, int player_swap_delay, int player_select_delay, int player_add_new_row_delay, float empty_row_percentage=0.8)
 - void push_new_row_task() **(override)**
+- void push_one_row_task() **(override)**
 - bool check_player_callback() **(override)**
     - check if player_callback is set
 - void set_player_callback(callback cb, int player_id=1) **(override)**
@@ -105,6 +109,7 @@
 #### var
 - List[PlayerState] player_states
 #### method
+- VersusGameState(int player_swap_delay, int player_select_delay, int player_add_new_row_delay)
 - void register_player(GameBoardState game_board_state)
     - register a new player
 - PlayerState find_target(PlayerState attacker) **(virtual)**
@@ -116,6 +121,7 @@
     - notify the players that the game is over
 - void push_new_row_task() **(override)**
     - VersusGameState's PushNewRowEvent implementation. Uses PlayerState.
+- void push_one_row_task() **(override)**
 - bool check_player_callback() **(override)**
     - check if all player callbacks are set
 - void set_player_callback(callback cb, int player_id=1) **(override)**

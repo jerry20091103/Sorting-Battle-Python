@@ -65,6 +65,7 @@ config = {
     'player_count': 2,
     'player_swap_delay': 10,
     'player_select_delay': 50,
+    'player_add_new_row_delay': 50,
     'realtime': False
 }
 game_base = GameBase(config)

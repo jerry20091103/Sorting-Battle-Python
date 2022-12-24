@@ -27,7 +27,7 @@ class GameState(ABC):
         args: Any=field(compare=False)
         kwargs: Any=field(compare=False)
 
-    def __init__(self, player_swap_delay, player_select_delay):
+    def __init__(self, player_swap_delay, player_select_delay, player_add_new_row_delay):
         '''
         Constructor with config.
         '''
@@ -37,6 +37,7 @@ class GameState(ABC):
         # init common game parameters
         self.player_swap_delay = player_swap_delay
         self.player_select_delay = player_select_delay
+        self.player_add_new_row_delay = player_add_new_row_delay
         self.level = 0
         self.game_over = False
         self.end_scheduler = False
@@ -53,8 +54,8 @@ class GameState(ABC):
             if realtime:
                 sleep((task.tick - self.current_tick) * 0.02)
             self.current_tick = task.tick
-            # todo: remove print tick later.
-            print('# tick:', self.current_tick, task.callback.__name__)
+            # *print task name for debug
+            # print('# tick:', self.current_tick, task.callback.__name__)
             task.callback(*task.args, **task.kwargs)
             if self.end_scheduler:
                 break
@@ -93,6 +94,13 @@ class GameState(ABC):
     def push_new_row_task(self):
         '''
         Add a new row to the game board
+        '''
+
+    @abstractmethod
+    def push_one_row_task(self, player_id):
+        '''
+        Push one row to the game board.
+        :param player_id: the player id.
         '''
 
     @abstractmethod
@@ -159,6 +167,10 @@ class GameState(ABC):
                 (tile_number, garbage_number) = player.game_board_state.game_controller_state.select(action_data)
                 action_delay = self.player_select_delay
                 assert tile_number > 0, "invalid select"
+            elif action_type == 3: # add_new_row
+                self.push_task(0, self.push_one_row_task, player_id)
+                action_delay = self.player_add_new_row_delay
+
             # schedule the next callback
             self.push_task(action_delay, self.player_callback_task, player_id)
         except AssertionError as e:

@@ -38,11 +38,11 @@ class GameBase:
         # init a GameState object
         if self.player_count == 1:
             game_board = GameBoardState(GameBase.game_board_config)
-            self.game_state = Endless1PGameState(game_board, config['player_swap_delay'], config['player_select_delay'])
+            self.game_state = Endless1PGameState(game_board, config['player_swap_delay'], config['player_select_delay'], config['player_add_new_row_delay'])
         elif self.player_count == 2:
             p1_game_board = GameBoardState(GameBase.game_board_config)
             p2_game_board = GameBoardState(GameBase.game_board_config)
-            self.game_state = Endless2PGameState(p1_game_board, p2_game_board, config['player_swap_delay'], config['player_select_delay'])
+            self.game_state = Endless2PGameState(p1_game_board, p2_game_board, config['player_swap_delay'], config['player_select_delay'], config['player_add_new_row_delay'])
         else:
             raise ValueError('player_count must be 1 or 2')
 

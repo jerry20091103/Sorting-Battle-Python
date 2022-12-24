@@ -15,12 +15,13 @@ class Endless2PGameState(VersusGameState):
         p2_game_board_state,
         player_swap_delay,
         player_select_delay,
+        player_add_new_row_delay,
         ):
         '''
         Constructor with config.
         '''
         # call base class constructor
-        super().__init__(player_swap_delay, player_select_delay)
+        super().__init__(player_swap_delay, player_select_delay, player_add_new_row_delay)
         self.init_tasks()
         self.register_player(p1_game_board_state)
         self.register_player(p2_game_board_state)

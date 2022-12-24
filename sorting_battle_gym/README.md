@@ -8,6 +8,7 @@ dict config {
     'player_count': int # 1 or 2
     'player_swap_delay': int # simulated delay for AI in ticks
     'player_select_delay': int # simulated delay for AI in ticks
+    'player_add_new_row_delay': int # simulated delay for AI in ticks
     'realtime': bool # whether to run the game in realtime
     # Each tick is 1/50 second (0.02 second)
 }
@@ -56,10 +57,11 @@ def agent_callback(game_status):
     :param game_status: dict, the current status of the game (see above)
     
     :return action_type, action_data: 
-        action_type: int, 0 for idle, 1 for swap, 2 for select
+        action_type: int, 0 for idle, 1 for swap, 2 for select, 3 for add_new_row
         action_data: for idle: int, number of ticks to idle
                      for swap: list of 2 tuples, [(row1, column1), (row2, column2)]
                      for select: list of tuples,  [(row, column), ...]
+                     for add_new_row: []
     '''
     # do stuff
     return action_type, action_data
@@ -92,6 +94,7 @@ config = {
     'player_count': 1,
     'player_swap_delay': 10,
     'player_select_delay': 50,
+    'player_add_new_row_delay': 50,
     'realtime': False
 }
 game_base = GameBase(config)

@@ -113,13 +113,13 @@ class VersusGameState(GameState):
             else:
                 self.game_state.push_task(1, self.check_receive_garbage_task)
 
-    def __init__(self, player_swap_delay, player_select_delay):
+    def __init__(self, player_swap_delay, player_select_delay, player_add_new_row_delay):
         '''
         class constructor
         This base class constructor should be called by the derived class constructor
         '''
         # must call base class constructor
-        super().__init__(player_swap_delay, player_select_delay)
+        super().__init__(player_swap_delay, player_select_delay, player_add_new_row_delay)
         # class variables
         self.player_states = []
 
@@ -200,6 +200,24 @@ class VersusGameState(GameState):
         # if the game is not over...
         else:
             self.push_task(self.get_tick_between_new_row(), self.push_new_row_task)
+    
+    def push_one_row_task(self, player_id):
+        '''
+        Add a new row to the game board
+        '''
+        assert 0 < player_id <= len(self.player_states), "player id out of range"
+        player = self.player_states[player_id - 1]
+        overflow = player.game_board_state.push_new_row(
+            player.game_board_state.game_grid_state.column_count - 1
+        )
+        if overflow:
+            player.game_board_state.status = GameBoardState.Status.LOSE
+        # if the game is over
+        if self.check_game_result_state():
+            self.game_over = True
+            self.game_end()
+            # schedule the last task
+            self.push_task(0, self.game_over_task)
 
     def check_player_callback(self):
         '''

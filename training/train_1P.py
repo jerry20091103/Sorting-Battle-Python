@@ -6,6 +6,9 @@ from sorting_battle_gym.game_base import GameBase
 from training.training_model_1P import NeuralNetwork
 from training.training_model_1P import Buffer
 from training.training_model_1P import ppo_agent
+from training.training_model_1P import trans_act
+from training.training_model_1P import is_legal_action, ACTION_SWAP, ACTION_SELECT, UPDATE_INTERVAL
+
 import numpy as np
 import torch
 

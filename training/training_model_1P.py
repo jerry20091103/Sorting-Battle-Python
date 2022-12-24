@@ -91,7 +91,7 @@ class ppo_agent():
       
     def update_network(self):
         state = torch.tensor(self.buffer.states, dtype=torch.float).cuda()
-        action = torch.tensor(self.buffer.actions, dtype=torch.float).cuda()
+        action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float).cuda()
         log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float).cuda()
         # state = torch.tensor(self.buffer.states, dtype=torch.float)
         # action = torch.tensor(self.buffer.actions, dtype=torch.float)

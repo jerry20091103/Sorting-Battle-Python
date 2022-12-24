@@ -11,5 +11,5 @@ pip install torch
 ## Usage
 ```
 cd training
-python 1P_train.py
+python train_1P.py
 ```

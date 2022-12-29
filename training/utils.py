@@ -33,9 +33,15 @@ def normalize_game_state(game_state):
     :param game_state: 2d list, value = -2 ~ 9
     :return: normalized 2d list, value = 0 ~ 1
     """
-    new_game_state = np.array(game_state)
-    new_game_state = (new_game_state - MIN_GRID)/(MAX_GRID - MIN_GRID)
-    new_game_state = list([list(row) for row in new_game_state])
+    new_game_state = dict()
+    for key in game_state.keys():
+        if key == 'grid':
+            new_grid = np.array(game_state[key])
+            new_grid = (new_grid - MIN_GRID)/(MAX_GRID - MIN_GRID)
+            new_grid = list([list(row) for row in new_grid])
+            new_game_state[key] = new_grid
+        else:
+            new_game_state[key] = game_state[key]
     return new_game_state
 
 def is_legal_action(action_type, action_data, game_state_grid):

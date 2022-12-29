@@ -34,16 +34,16 @@ for i in range(50):
             nr = row + dr * LEN
             nc = col + dc * LEN
 
-        if (nr >= 10 or nc >= 5):
-            continue
-        if (nc < 0 or nr < 0):
-            continue
+            if (nr >= 10 or nc >= 5):
+                continue
+            if (nc < 0 or nr < 0):
+                continue
 
-        NUM_SELECT += 1
-        tmp = [[row, col]]
-        for j in range(LEN):
-            tmp.append([tmp[-1][0] + dr, tmp[-1][1] + dc])
-        table.append([ SELECT, tmp ])
+            NUM_SELECT += 1
+            tmp = [[row, col]]
+            for j in range(LEN):
+                tmp.append([tmp[-1][0] + dr, tmp[-1][1] + dc])
+            table.append([ SELECT, tmp ])
 print(f"Total number of select: {NUM_SELECT}")
 
 # 1 is for add new blocks

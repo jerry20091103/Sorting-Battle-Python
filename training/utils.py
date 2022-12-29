@@ -28,6 +28,11 @@ MAX_GRID = 9
 MIN_GRID = -2
 
 def normalize_game_state(game_state):
+    """
+    Normalize grid values to 0-1
+    :param game_state: 2d list, value = -2 ~ 9
+    :return: normalized 2d list, value = 0 ~ 1
+    """
     new_game_state = np.array(game_state)
     new_game_state = (new_game_state - MIN_GRID)/(MAX_GRID - MIN_GRID)
     new_game_state = list([list(row) for row in new_game_state])

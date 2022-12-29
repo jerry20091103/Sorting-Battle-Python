@@ -3,8 +3,14 @@ This is a terminal version of the 1P random play for training
 '''
 import sys
 sys.path.append("../")
-from sorting_battle_gym.game_base import GameBase
 import random
+from sorting_battle_gym.game_base import GameBase
+from training.utils import is_legal_action, trans_action_id
+
+
+# training settings
+IDLE_TIME=8
+EPISODE_NUM=10
 
 def random_playcallback(game_state):
     # show_game_status(False, game_state['game_end'], game_state['level'], game_state['score'], game_state['grid'])
@@ -41,7 +47,7 @@ config = {
     'realtime': False
 }
 
-accumulated_score = 0
+ACCUMULATED_SCORE = 0
 for i in range(EPISODE_NUM):
     game_base = GameBase(config)
     # set the callback function
@@ -53,4 +59,4 @@ for i in range(EPISODE_NUM):
     print("EPISODE_NUM: " + str(i))
     print("score: " + str(game_base.game_state.game_board_state.game_score_state.total_score))
     print("=================================================")
-print("Average score: " + str(accumulated_score / EPISODE_NUM))
+print("Average score: " + str(ACCUMULATED_SCORE / EPISODE_NUM))

@@ -16,7 +16,7 @@ GAMMA=0.99
 UPDATE_NUM=4
 EPSILON=0.2
 
-class ppo_agent():
+class PPOAgent():
     def __init__(self, observation_dimension, action_dimension):
         """
         Constructor of PPO Agent
@@ -51,14 +51,14 @@ class ppo_agent():
         grid = torch.tensor(grid, dtype=torch.float).cuda()
         # grid = torch.tensor(grid, dtype=torch.float)
         action = self.policy_network(grid).detach()
-      
+
         # Multivariate Normal Distribution for continuous action exploration
         dist = MultivariateNormal(action, self.cov_mat)
         action = dist.sample()
         log_prob = dist.log_prob(action)
-        
+
         return action.data.cpu().numpy(), log_prob
-      
+
     def update_network(self):
         state = torch.tensor(self.buffer.states, dtype=torch.float).cuda()
         action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float).cuda()
@@ -73,7 +73,7 @@ class ppo_agent():
             for r in reversed(episode_rewards):
                 discounted_reward = r + discounted_reward * GAMMA
                 self.buffer.rewards_to_go.insert(0, discounted_reward)
-        
+
         rewards_to_go = torch.tensor(self.buffer.rewards_to_go, dtype=torch.float).cuda()
         # rewards_to_go = torch.tensor(self.buffer.rewards_to_go, dtype=torch.float
 

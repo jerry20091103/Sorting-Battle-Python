@@ -7,7 +7,7 @@ import onnx
 def Convert_ONNX(model_player, input_size = 50): 
       """
       Export model to onnx file 
-      :param model_player: model player (ppo_agent)
+      :param model_player: model player (PPOAgent)
       :param input_size: model input size
       """
       # set the model to inference mode

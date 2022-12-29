@@ -6,8 +6,8 @@ sys.path.append("../")
 import torch
 from training.utils import select_act
 from sorting_battle_gym.game_base import GameBase
-from training.ppo_agent import ppo_agent
-
+from training.ppo_agent import PPOAgent
+sys.path.append("../")
 
 
 # training settings
@@ -56,7 +56,7 @@ def player1_callback(game_state):
     print(f'In P1, action_type: {action_type}, action_data: {action_data}')
     return action_type, action_data
 
-model_player1 = ppo_agent(50, 1441)
+model_player1 = PPOAgent(50, 1801)
 # or load model
 # model_player1 = torch.load(path)
 

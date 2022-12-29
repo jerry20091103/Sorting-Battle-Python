@@ -1,3 +1,6 @@
+'''
+This module contains Neural Network for training.
+'''
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

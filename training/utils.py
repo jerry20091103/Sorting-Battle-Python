@@ -1,3 +1,6 @@
+'''
+This module contains common utility functions for training.
+'''
 import numpy as np
 from sorting_battle_gym.game_board_state import GameBoardState
 

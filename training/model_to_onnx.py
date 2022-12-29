@@ -1,3 +1,6 @@
+'''
+This module for converting model to onnx file.
+'''
 import torch.onnx
 import onnx
 

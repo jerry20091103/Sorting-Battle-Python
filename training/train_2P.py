@@ -1,9 +1,13 @@
+'''
+This is a terminal version of the 2P game for training
+'''
 import sys
+sys.path.append("../")
 import torch
 from training.utils import select_act
 from sorting_battle_gym.game_base import GameBase
 from training.ppo_agent import ppo_agent
-sys.path.append("../")
+
 
 
 # training settings

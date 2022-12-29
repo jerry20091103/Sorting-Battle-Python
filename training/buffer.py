@@ -1,3 +1,6 @@
+'''
+This module contains Buffer for training.
+'''
 class Buffer():
     def __init__(self):
         """

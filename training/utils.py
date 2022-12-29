@@ -23,7 +23,15 @@ ACTION_SWAP = 1
 ACTION_SELECT = 2
 ACTION_ADD = 3
 MAX_NEGATIVE_REWARD = -10000
-ACTION_SIZE = 640
+ACTION_SIZE = 641
+MAX_GRID = 9
+MIN_GRID = -2
+
+def normalize_game_state(game_state):
+    new_game_state = np.array(game_state)
+    new_game_state = (new_game_state - MIN_GRID)/(MAX_GRID - MIN_GRID)
+    new_game_state = list([list(row) for row in new_game_state])
+    return new_game_state
 
 def is_legal_action(action_type, action_data, game_state_grid):
     """
@@ -52,7 +60,6 @@ def trans_action_id(action_id):
     :return: gym format (action_type, (list of)[coordinates])
     """
     return ACTION_TABLE[action_id]
-
 
 def select_act(action, grid, choose_legal=True):
     """
@@ -83,3 +90,7 @@ def select_act(action, grid, choose_legal=True):
         action_id = action.argmax()
 
     return trans_action_id(action_id)
+
+# testing
+# game_state = [[1, 2, 3, 9], [-2, -1, 0, 8], [4, 5, 6, 7]]
+# print(normalize_game_state(game_state))

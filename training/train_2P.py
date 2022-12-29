@@ -4,7 +4,7 @@ This is a terminal version of the 2P game for training
 import sys
 sys.path.append("../")
 import torch
-from training.utils import select_act, ACTION_SIZE
+from training.utils import select_act, normalize_game_state, ACTION_SIZE
 from sorting_battle_gym.game_base import GameBase
 from training.ppo_agent import PPOAgent
 
@@ -32,7 +32,7 @@ def player1_callback(game_state):
     # game_state['score'], game_state['grid'])
 
     # the model takes action according to current state of the game
-    action, log_prob = model_player1.act(game_state)
+    action, log_prob = model_player1.act(normalize_game_state(game_state[:]))
 
     # the current state is stored to replay memory for future learning
     model_player1.buffer.states.append([item for sublist in game_state["grid"] for item in sublist])
@@ -65,7 +65,7 @@ def player2_callback(game_state):
     # game_state['score'], game_state['grid'])
 
     # the model takes action according to current state of the game
-    action, log_prob = model_player2.act(game_state)
+    action, log_prob = model_player2.act(normalize_game_state(game_state[:]))
 
     # the current state is stored to replay memory for future learning
     model_player2.buffer.states.append([item for sublist in game_state["grid"] for item in sublist])

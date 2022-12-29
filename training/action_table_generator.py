@@ -55,3 +55,5 @@ print("==============================")
 print("action id|action type|action data")
 for i in range(TOTAL_NUM):
     print(f"|{i:8}|{table[i][0]:^11}|{table[i][1]}")
+
+print(table)

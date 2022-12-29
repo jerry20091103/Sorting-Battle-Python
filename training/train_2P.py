@@ -4,7 +4,7 @@ This is a terminal version of the 2P game for training
 import sys
 sys.path.append("../")
 import torch
-from training.utils import select_act
+from training.utils import select_act, ACTION_SIZE
 from sorting_battle_gym.game_base import GameBase
 from training.ppo_agent import PPOAgent
 
@@ -88,8 +88,8 @@ def player2_callback(game_state):
     print(f'In P2, action_type: {action_type}, action_data: {action_data}')
     return action_type, action_data
 
-model_player1 = PPOAgent(50, 1801)
-model_player2 = PPOAgent(50, 1801)
+model_player1 = PPOAgent(50, ACTION_SIZE)
+model_player2 = PPOAgent(50, ACTION_SIZE)
 # or load model
 # model_player1 = torch.load(path_P1)
 # model_player2 = torch.load(path_P2)

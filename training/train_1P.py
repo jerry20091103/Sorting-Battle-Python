@@ -33,7 +33,7 @@ def player1_callback(game_state):
     # game_state['score'], game_state['grid'])
 
     # the model takes action according to current state of the game
-    action, log_prob = model_player1.act(normalize_game_state(game_state[:]))
+    action, log_prob = model_player1.act(normalize_game_state(game_state["grid"]))
 
     # the current state is stored to replay memory for future learning
     model_player1.buffer.states.append([item for sublist in game_state["grid"] for item in sublist])

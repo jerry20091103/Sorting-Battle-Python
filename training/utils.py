@@ -1,4 +1,5 @@
 import sys
+import copy
 '''
 This module contains common utility functions for training.
 '''
@@ -70,7 +71,7 @@ def trans_action_id(action_id):
     :param action_id: action id (0-1800)
     :return: gym format (action_type, (list of)[coordinates])
     """
-    return ACTION_TABLE[action_id]
+    return copy.deepcopy(ACTION_TABLE[action_id][0]), copy.deepcopy(ACTION_TABLE[action_id][1])
 
 def select_act(action, grid, choose_legal=True):
     """
@@ -92,11 +93,6 @@ def select_act(action, grid, choose_legal=True):
 
         legal_action_space = np.array(legal_action_space)
         action_id = legal_action_space.argmax()
-
-        # if there is no legal action, idle
-        if np.max(legal_action_space) == MAX_NEGATIVE_REWARD:
-            action_type, action_data = 0, 10
-        return action_type, action_data
     else:
         action_id = action.argmax()
 

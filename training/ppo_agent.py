@@ -13,7 +13,7 @@ from buffer import Buffer
 V_LR=1e-4
 P_LR=1e-4
 GAMMA=0.99
-UPDATE_NUM=4
+UPDATE_NUM=2
 EPSILON=0.2
 
 class PPOAgent():
@@ -23,33 +23,33 @@ class PPOAgent():
         """
         self.counter = 0
         # step 1: initial policy & value parameters
-        self.policy_network = NeuralNetwork(observation_dimension, action_dimension).cuda()
-        self.value_network = NeuralNetwork(observation_dimension, 1).cuda()
-        # self.policy_network = NeuralNetwork(observation_dimension, action_dimension)
-        # self.value_network = NeuralNetwork(observation_dimension, 1)
+        # self.policy_network = NeuralNetwork(observation_dimension, action_dimension).cuda()
+        # self.value_network = NeuralNetwork(observation_dimension, 1).cuda()
+        self.policy_network = NeuralNetwork(observation_dimension, action_dimension)
+        self.value_network = NeuralNetwork(observation_dimension, 1)
 
         self.buffer = Buffer()
         self.cov_var = torch.full(size=(action_dimension,), fill_value=0.5)
-        self.cov_mat = torch.diag(self.cov_var).cuda()
-        # self.cov_mat = torch.diag(self.cov_var)
+        # self.cov_mat = torch.diag(self.cov_var).cuda()
+        self.cov_mat = torch.diag(self.cov_var)
 
         self.loss_func = nn.MSELoss()
         self.policy_optimizer = torch.optim.Adam(self.policy_network.parameters(), lr = P_LR)
         self.value_optimizer = torch.optim.Adam(self.value_network.parameters(), lr = V_LR)
         self.prev_score = 0
 
-    def reset(self):
-        """
-        Reset previous score when starting a new game
-        """
-        self.prev_score = 0
+    # def reset(self):
+    #     """
+    #     Reset previous score when starting a new game
+    #     """
+    #     self.prev_score = 0
 
     def act(self, state):
         self.counter += 1
         grid = state["grid"]
         grid = [item for sublist in grid for item in sublist]
-        grid = torch.tensor(grid, dtype=torch.float).cuda()
-        # grid = torch.tensor(grid, dtype=torch.float)
+        # grid = torch.tensor(grid, dtype=torch.float).cuda()
+        grid = torch.tensor(grid, dtype=torch.float)
         action = self.policy_network(grid).detach()
 
         # Multivariate Normal Distribution for continuous action exploration
@@ -60,12 +60,12 @@ class PPOAgent():
         return action.data.cpu().numpy(), log_prob
 
     def update_network(self):
-        state = torch.tensor(self.buffer.states, dtype=torch.float).cuda()
-        action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float).cuda()
-        log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float).cuda()
-        # state = torch.tensor(self.buffer.states, dtype=torch.float)
-        # action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float)
-        # log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float
+        # state = torch.tensor(self.buffer.states, dtype=torch.float).cuda()
+        # action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float).cuda()
+        # log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float).cuda()
+        state = torch.tensor(self.buffer.states, dtype=torch.float)
+        action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float)
+        log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float)
 
         # step 4: compute rewards_to_go
         for episode_rewards in reversed(self.buffer.rewards):
@@ -74,8 +74,8 @@ class PPOAgent():
                 discounted_reward = r + discounted_reward * GAMMA
                 self.buffer.rewards_to_go.insert(0, discounted_reward)
 
-        rewards_to_go = torch.tensor(self.buffer.rewards_to_go, dtype=torch.float).cuda()
-        # rewards_to_go = torch.tensor(self.buffer.rewards_to_go, dtype=torch.float
+        # rewards_to_go = torch.tensor(self.buffer.rewards_to_go, dtype=torch.float).cuda()
+        rewards_to_go = torch.tensor(self.buffer.rewards_to_go, dtype=torch.float)
 
         # step 5: compute advantage estimate A based on the current value function V
         V = self.value_network(state).detach().squeeze()
@@ -102,3 +102,4 @@ class PPOAgent():
         # clear the buffer
         self.buffer = Buffer()
         self.counter = 0
+        self.prev_score = 0

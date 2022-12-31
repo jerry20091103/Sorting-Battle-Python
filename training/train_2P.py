@@ -10,8 +10,9 @@ from training.ppo_agent import PPOAgent
 
 
 # training settings
-UPDATE_INTERVAL=8
-EPISODE_NUM=10
+LEGAL_ACT_COST = 1
+MAX_NEGATIVE_REWARD = -10000
+EPISODE_NUM=100
 
 # initialize the gym
 config = {
@@ -22,37 +23,42 @@ config = {
     'realtime': False
 }
 
-def player1_callback(game_state):
+def player1_callback(game_state, to_print=False):
     """
     Player1's callback function
     :param game_state: current game state
     :return: the action player1's going to act
     """
-    # show_game_status(False, game_state['game_end'], game_state['level'], \
-    # game_state['score'], game_state['grid'])
-
     # the model takes action according to current state of the game
-    action, log_prob = model_player1.act(normalize_game_state(game_state["grid"]))
+    action, log_prob = model_player1.act(normalize_game_state(game_state))
 
     # the current state is stored to replay memory for future learning
-    model_player1.buffer.states.append([item for sublist in game_state["grid"] for item in sublist])
+    model_player1.buffer.states.append([item for sublist in normalize_game_state(game_state)["grid"] for item in sublist])
     model_player1.buffer.actions.append(action)
     model_player1.buffer.log_probs.append(log_prob)
 
     # convert the action to the format that the gym can understand
     action_type, action_data = select_act(action, game_state["grid"])
 
-    print("Reward: " + str(game_state["score"] - model_player1.prev_score - 1))
-    model_player1.buffer.episode_rewards.append(game_state["score"] - model_player1.prev_score - 1)
-
-    if model_player1.counter > UPDATE_INTERVAL:
-        model_player1.buffer.rewards.append(model_player1.buffer.episode_rewards)
-        model_player1.buffer.episode_rewards = []
-        model_player1.update_network()
-
+    if game_state['game_end']:
+        print("win_flag of P1: " + str(game_state['win_flag']))
+        if game_state['win_flag']:
+            reward = - MAX_NEGATIVE_REWARD + (game_state['score'] - game_state['opponent_score'])
+            model_player1.prev_score = 1 # means WIN
+        else:
+            reward = MAX_NEGATIVE_REWARD + (game_state['score'] - game_state['opponent_score'])
+            model_player1.prev_score = 0 # means LOSE
+    else:
+        reward = game_state["score"] - model_player1.prev_score - LEGAL_ACT_COST
+        model_player1.prev_score = game_state["score"]
+  
+    if to_print:
+      print("Reward: " + str(reward))
+    model_player1.buffer.episode_rewards.append(reward)
+    
     # give the action to the gym
-    model_player1.prev_score = game_state["score"]
-    print(f'In P1, action_type: {action_type}, action_data: {action_data}')
+    if to_print:
+      print(f'In P1, action_type: {action_type}, action_data: {action_data}')
     return action_type, action_data
 
 def player2_callback(game_state):
@@ -61,39 +67,37 @@ def player2_callback(game_state):
     :param game_state: current game state
     :return: the action player2's going to act
     """
-    # show_game_status(False, game_state['game_end'], game_state['level'], \
-    # game_state['score'], game_state['grid'])
-
     # the model takes action according to current state of the game
-    action, log_prob = model_player2.act(normalize_game_state(game_state["grid"]))
-
-    # the current state is stored to replay memory for future learning
-    model_player2.buffer.states.append([item for sublist in game_state["grid"] for item in sublist])
-    model_player2.buffer.actions.append(action)
-    model_player2.buffer.log_probs.append(log_prob)
+    action, log_prob = model_player2.act(normalize_game_state(game_state))
 
     # convert the action to the format that the gym can understand
     action_type, action_data = select_act(action, game_state["grid"])
-
-    print("Reward: " + str(game_state["score"] - model_player2.prev_score - 1))
-    model_player2.buffer.episode_rewards.append(game_state["score"] - model_player2.prev_score - 1)
-
-    if model_player2.counter > UPDATE_INTERVAL:
-        model_player2.buffer.rewards.append(model_player2.buffer.episode_rewards)
-        model_player2.buffer.episode_rewards = []
-        model_player2.update_network()
-
-    # give the action to the gym
-    model_player2.prev_score = game_state["score"]
-    print(f'In P2, action_type: {action_type}, action_data: {action_data}')
     return action_type, action_data
+
 
 model_player1 = PPOAgent(50, ACTION_SIZE)
 model_player2 = PPOAgent(50, ACTION_SIZE)
 # or load model
+model_save_P1_folder = 'model/'
+model_save_P2_folder = 'model/'
+model_save_P1_name = 'training_model_2P_0.83.pt'
+model_save_P2_name = 'training_model_2P_0.83.pt'
+path_P1 = model_save_P1_folder + model_save_P1_name
+path_P2 = model_save_P2_folder + model_save_P2_name
+
 # model_player1 = torch.load(path_P1)
 # model_player2 = torch.load(path_P2)
 
+path_tmp1 = model_save_P1_folder + 'training_model_2P_0.83_policy.pt'
+path_tmp2 = model_save_P1_folder + 'training_model_2P_0.83_value.pt'
+
+model_player1.policy_network.load_state_dict(torch.load(path_tmp1))
+model_player1.value_network.load_state_dict(torch.load(path_tmp2))
+
+model_player2.policy_network.load_state_dict(torch.load(path_tmp1))
+model_player2.value_network.load_state_dict(torch.load(path_tmp2))
+
+P1_win = 0
 with open('training_log_2P.txt', 'w') as f:
     for i in range(EPISODE_NUM):
         game_base = GameBase(config)
@@ -102,6 +106,14 @@ with open('training_log_2P.txt', 'w') as f:
         game_base.set_callback(player2_callback, 2)
         # run the game
         game_base.run_game()
+
+        if model_player1.prev_score:
+            P1_win += 1
+
+        model_player1.buffer.rewards.append(model_player1.buffer.episode_rewards[1:]+[0])
+        model_player1.buffer.episode_rewards = []
+        model_player1.update_network()
+
         print("=================================================")
         print("EPISODE_NUM: " + str(i))
         print("score of P1: " + str(game_base.game_state.player_states[0].\
@@ -117,13 +129,10 @@ with open('training_log_2P.txt', 'w') as f:
               game_board_state.game_score_state.total_score), file = f)
         print("score of P2: " + str(game_base.game_state.player_states[1].\
               game_board_state.game_score_state.total_score), file = f)
+print(f"P1 win: {P1_win}/{EPISODE_NUM}")
+print(f"Rate: {P1_win/EPISODE_NUM}")
+
 
 # save model, be careful of filename (version)
-model_save_P1_folder = 'model/'
-model_save_P2_folder = 'model/'
-model_save_P1_name = 'training_model_2P_1_v0.pt'
-model_save_P2_name = 'training_model_2P_2_v0.pt'
-path_P1 = model_save_P1_folder + model_save_P1_name
-path_P2 = model_save_P2_folder + model_save_P2_name
-torch.save(model_player1, path_P1)
-torch.save(model_player2, path_P2)
+# torch.save(model_player1, path_P1)
+# torch.save(model_player2, path_P2)

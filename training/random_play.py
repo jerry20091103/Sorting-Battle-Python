@@ -20,7 +20,7 @@ def random_playcallback(game_state):
     grid=game_state['grid']
 
     legal_action_space = []
-    for i in range(1441):
+    for i in range(641):
         action_type, action_data = trans_action_id(i)
         if is_legal_action(action_type, action_data, grid):
             legal_action_space.append(i)

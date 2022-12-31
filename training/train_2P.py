@@ -4,7 +4,7 @@ This is a terminal version of the 2P game for training
 import sys
 sys.path.append("../")
 import torch
-from training.utils import select_act, normalize_game_state, ACTION_SIZE
+from training.utils import select_act, normalize_game_state, ACTION_SIZE, plot_curve
 from sorting_battle_gym.game_base import GameBase
 from training.ppo_agent import PPOAgent
 
@@ -132,6 +132,8 @@ with open('training_log_2P.txt', 'w') as f:
 print(f"P1 win: {P1_win}/{EPISODE_NUM}")
 print(f"Rate: {P1_win/EPISODE_NUM}")
 
+# print the reward of each episode
+plot_curve(model_player1.buffer.rewards, "agent training reward")
 
 # save model, be careful of filename (version)
 # torch.save(model_player1, path_P1)

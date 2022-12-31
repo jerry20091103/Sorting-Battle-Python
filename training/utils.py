@@ -7,6 +7,7 @@ import numpy as np
 sys.path.append("../")
 from sorting_battle_gym.game_board_state import GameBoardState
 from training.action_table import ACTION_TABLE
+import matplotlib.pyplot as plt
 
 game_board_config = {
   'seed' : None,
@@ -101,3 +102,14 @@ def select_act(action, grid, choose_legal=True):
 # testing
 # game_state = [[1, 2, 3, 9], [-2, -1, 0, 8], [4, 5, 6, 7]]
 # print(normalize_game_state(game_state))
+
+def plot_curve(train_rewards, filename):
+    plt.xlabel('episode')
+    plt.ylabel('reward')
+
+    x1 = np.arange(0, EPISODE_NUM)
+    plt.plot(x1, train_rewards, c='blue', label='train')
+
+    leg = plt.legend(loc='upper left')
+    plt.title(filename)
+    plt.savefig(filename + ".jpg")

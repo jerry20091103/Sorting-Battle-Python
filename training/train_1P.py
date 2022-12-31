@@ -7,7 +7,6 @@ import torch
 from training.utils import select_act, normalize_game_state, ACTION_SIZE
 from sorting_battle_gym.game_base import GameBase
 from training.ppo_agent import PPOAgent
-sys.path.append("../")
 
 
 # training settings

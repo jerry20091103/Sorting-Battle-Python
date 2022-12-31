@@ -103,13 +103,20 @@ def select_act(action, grid, choose_legal=True):
 # game_state = [[1, 2, 3, 9], [-2, -1, 0, 8], [4, 5, 6, 7]]
 # print(normalize_game_state(game_state))
 
-def plot_curve(train_rewards, filename):
-    plt.xlabel('episode')
-    plt.ylabel('reward')
-
-    x1 = np.arange(0, EPISODE_NUM)
-    plt.plot(x1, train_rewards, c='blue', label='train')
-
-    leg = plt.legend(loc='upper left')
-    plt.title(filename)
-    plt.savefig(filename + ".jpg")
+def plot_curve(plot_data, x_label, y_label, title='', filename=''):
+    """
+    :param plot_data: data to be plotted
+    :param x_label: x-axis name
+    :param y_label: y-axis name
+    :param title: title of image
+    :param filename: default='' (only plot the image), otherwise, save the image as filename
+    """
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    x = [i+1 for i in range(len(plot_data))]
+    plt.plot(x, plot_data, c='blue', label='train')
+    plt.title(title)
+    if filename:
+        plt.savefig(filename)
+    else:
+        plt.show()

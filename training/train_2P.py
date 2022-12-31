@@ -5,14 +5,15 @@ import sys
 sys.path.append("../")
 import torch
 from training.utils import select_act, normalize_game_state, ACTION_SIZE, plot_curve
+from training.random_play import random_playcallback
 from sorting_battle_gym.game_base import GameBase
 from training.ppo_agent import PPOAgent
-
 
 # training settings
 LEGAL_ACT_COST = 1
 MAX_NEGATIVE_REWARD = -10000
-EPISODE_NUM=100
+EPISODE_NUM = 500
+TRAINING_STEP = EPISODE_NUM // 10
 
 # initialize the gym
 config = {
@@ -68,15 +69,12 @@ def player2_callback(game_state):
     :return: the action player2's going to act
     """
     # the model takes action according to current state of the game
-    action, log_prob = model_player2.act(normalize_game_state(game_state))
+    action= model_player2.act(normalize_game_state(game_state))[0]
 
     # convert the action to the format that the gym can understand
     action_type, action_data = select_act(action, game_state["grid"])
     return action_type, action_data
 
-
-model_player1 = PPOAgent(50, ACTION_SIZE)
-model_player2 = PPOAgent(50, ACTION_SIZE)
 # or load model
 model_save_P1_folder = 'model/'
 model_save_P2_folder = 'model/'
@@ -88,22 +86,22 @@ path_P2 = model_save_P2_folder + model_save_P2_name
 # model_player1 = torch.load(path_P1)
 # model_player2 = torch.load(path_P2)
 
-path_tmp1 = model_save_P1_folder + 'training_model_2P_0.83_policy.pt'
-path_tmp2 = model_save_P1_folder + 'training_model_2P_0.83_value.pt'
+path_policy1 = model_save_P1_folder + 'training_model_2P_0.83_policy.pt'
+path_value1 = model_save_P1_folder + 'training_model_2P_0.83_value.pt'
 
-model_player1.policy_network.load_state_dict(torch.load(path_tmp1))
-model_player1.value_network.load_state_dict(torch.load(path_tmp2))
-
-model_player2.policy_network.load_state_dict(torch.load(path_tmp1))
-model_player2.value_network.load_state_dict(torch.load(path_tmp2))
+model_player1 = PPOAgent(50, ACTION_SIZE, path_policy1, path_value1)
+model_player2 = PPOAgent(50, ACTION_SIZE, path_policy1, path_value1)
 
 P1_win = 0
+p1_win_rates = []
+
 with open('training_log_2P.txt', 'w') as f:
     for i in range(EPISODE_NUM):
         game_base = GameBase(config)
         # set the callback function
         game_base.set_callback(player1_callback, 1)
-        game_base.set_callback(player2_callback, 2)
+        # game_base.set_callback(player2_callback, 2)
+        game_base.set_callback(random_playcallback, 2)
         # run the game
         game_base.run_game()
 
@@ -113,27 +111,31 @@ with open('training_log_2P.txt', 'w') as f:
         model_player1.buffer.rewards.append(model_player1.buffer.episode_rewards[1:]+[0])
         model_player1.buffer.episode_rewards = []
         model_player1.update_network()
-
+        score1, score2 = [player_state.game_board_state.game_score_state.total_score \
+                          for player_state in game_base.game_state.player_states]
         print("=================================================")
         print("EPISODE_NUM: " + str(i))
-        print("score of P1: " + str(game_base.game_state.player_states[0].\
-              game_board_state.game_score_state.total_score))
-        print("score of P2: " + str(game_base.game_state.player_states[1].\
-              game_board_state.game_score_state.total_score))
+        print("score of P1: " + str(score1))
+        print("score of P2: " + str(score2))
         print("=================================================")
         
         # log into file
         print("=================================================", file = f)
         print("EPISODE_NUM: " + str(i), file = f)
-        print("score of P1: " + str(game_base.game_state.player_states[0].\
-              game_board_state.game_score_state.total_score), file = f)
-        print("score of P2: " + str(game_base.game_state.player_states[1].\
-              game_board_state.game_score_state.total_score), file = f)
+        print("score of P1: " + str(score1), file = f)
+        print("score of P2: " + str(score2), file = f)
+
+        if i % TRAINING_STEP == (TRAINING_STEP - 1):
+            current_win_rate = P1_win/(i + 1)
+            p1_win_rates.append(current_win_rate)
+            print(f'step: {i // TRAINING_STEP}, win rate: {current_win_rate} ({P1_win}/{i + 1})')
+
+
 print(f"P1 win: {P1_win}/{EPISODE_NUM}")
 print(f"Rate: {P1_win/EPISODE_NUM}")
 
 # print the reward of each episode
-plot_curve(model_player1.buffer.rewards, "agent training reward")
+plot_curve(p1_win_rates, 'training step', f'win_rate / {TRAINING_STEP} games', 'agent training win rate', 'training_win_rate.jpg')
 
 # save model, be careful of filename (version)
 # torch.save(model_player1, path_P1)

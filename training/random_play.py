@@ -29,34 +29,34 @@ def random_playcallback(game_state):
     if legal_action_space == []:
         action_type = 0
         action_data = IDLE_TIME
-        print(f'In Random, action_type: {action_type}, action_data: {action_data}')
+        # print(f'In Random, action_type: {action_type}, action_data: {action_data}')
         return action_type, action_data
 
     action_id = random.choice(legal_action_space)
     # convert the action to the format that the gym can understand
     action_type, action_data = trans_action_id(action_id)
 
-    print(f'In Random, action_type: {action_type}, action_data: {action_data}')
+    # print(f'In Random, action_type: {action_type}, action_data: {action_data}')
     return action_type, action_data
 
-config = {
-    'player_count': 1,
-    'player_swap_delay': 40,
-    'player_select_delay': 50,
-    'player_add_new_row_delay': 10,
-    'realtime': False
-}
+# config = {
+#     'player_count': 1,
+#     'player_swap_delay': 40,
+#     'player_select_delay': 50,
+#     'player_add_new_row_delay': 10,
+#     'realtime': False
+# }
 
-ACCUMULATED_SCORE = 0
-for i in range(EPISODE_NUM):
-    game_base = GameBase(config)
-    # set the callback function
-    game_base.set_callback(random_playcallback, 1)
-    # run the game
-    game_base.run_game()
+# ACCUMULATED_SCORE = 0
+# for i in range(EPISODE_NUM):
+#     game_base = GameBase(config)
+#     # set the callback function
+#     game_base.set_callback(random_playcallback, 1)
+#     # run the game
+#     game_base.run_game()
 
-    print("=================================================")
-    print("EPISODE_NUM: " + str(i))
-    print("score: " + str(game_base.game_state.game_board_state.game_score_state.total_score))
-    print("=================================================")
-print("Average score: " + str(ACCUMULATED_SCORE / EPISODE_NUM))
+#     print("=================================================")
+#     print("EPISODE_NUM: " + str(i))
+#     print("score: " + str(game_base.game_state.game_board_state.game_score_state.total_score))
+#     print("=================================================")
+# print("Average score: " + str(ACCUMULATED_SCORE / EPISODE_NUM))

@@ -1,12 +1,8 @@
 =================================================
 EPISODE_NUM: 0
-score of P1: 1250
-score of P2: 2325
+score of P1: 2500
+score of P2: 4300
 =================================================
 EPISODE_NUM: 1
-score of P1: 24725
-score of P2: 25025
-=================================================
-EPISODE_NUM: 2
-score of P1: 6825
-score of P2: 8650
+score of P1: 12150
+score of P2: 9875

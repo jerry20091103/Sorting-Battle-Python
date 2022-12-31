@@ -17,7 +17,7 @@ UPDATE_NUM=2
 EPSILON=0.2
 
 class PPOAgent():
-    def __init__(self, observation_dimension, action_dimension):
+    def __init__(self, observation_dimension, action_dimension, policy_network='', value_network=''):
         """
         Constructor of PPO Agent
         """
@@ -25,6 +25,10 @@ class PPOAgent():
         # step 1: initial policy & value parameters
         self.policy_network = NeuralNetwork(observation_dimension, action_dimension).cuda()
         self.value_network = NeuralNetwork(observation_dimension, 1).cuda()
+        if policy_network:
+            self.policy_network.load_state_dict(torch.load(policy_network))
+        if value_network:
+            self.value_network.load_state_dict(torch.load(value_network))
         # self.policy_network = NeuralNetwork(observation_dimension, action_dimension)
         # self.value_network = NeuralNetwork(observation_dimension, 1)
 

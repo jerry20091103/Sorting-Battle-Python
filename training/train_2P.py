@@ -13,14 +13,14 @@ from training.ppo_agent import PPOAgent
 LEGAL_ACT_COST = 1
 MAX_NEGATIVE_REWARD = -10000
 EPISODE_NUM = 500
-TRAINING_STEP = EPISODE_NUM // 10
+TRAINING_STEP = 10
 
 # initialize the gym
 config = {
     'player_count': 2,
-    'player_swap_delay': 10,
+    'player_swap_delay': 30,
     'player_select_delay': 50,
-    'player_add_new_row_delay': 50,
+    'player_add_new_row_delay': 20,
     'realtime': False
 }
 
@@ -54,12 +54,12 @@ def player1_callback(game_state, to_print=False):
         model_player1.prev_score = game_state["score"]
   
     if to_print:
-      print("Reward: " + str(reward))
+        print("Reward: " + str(reward))
     model_player1.buffer.episode_rewards.append(reward)
     
     # give the action to the gym
     if to_print:
-      print(f'In P1, action_type: {action_type}, action_data: {action_data}')
+        print(f'In P1, action_type: {action_type}, action_data: {action_data}')
     return action_type, action_data
 
 def player2_callback(game_state):
@@ -89,9 +89,8 @@ path_P2 = model_save_P2_folder + model_save_P2_name
 path_policy1 = model_save_P1_folder + 'training_model_2P_0.83_policy.pt'
 path_value1 = model_save_P1_folder + 'training_model_2P_0.83_value.pt'
 
-model_player1 = PPOAgent(50, ACTION_SIZE, path_policy1, path_value1)
+model_player1 = PPOAgent(50, ACTION_SIZE) #, path_policy1, path_value1)
 model_player2 = PPOAgent(50, ACTION_SIZE, path_policy1, path_value1)
-
 P1_win = 0
 p1_win_rates = []
 
@@ -128,14 +127,22 @@ with open('training_log_2P.txt', 'w') as f:
         if i % TRAINING_STEP == (TRAINING_STEP - 1):
             current_win_rate = P1_win/(i + 1)
             p1_win_rates.append(current_win_rate)
-            print(f'step: {i // TRAINING_STEP}, win rate: {current_win_rate} ({P1_win}/{i + 1})')
+            print(f'step: {i + 1}, win rate: {current_win_rate} ({P1_win}/{i + 1})')
+            print('model backup...')
+            torch.save(model_player1, f'model/zero_backup/policy_{i + 1}.pt')
+            torch.save(model_player1, f'model/zero_backup/value_{i + 1}.pt')
+            print('image backup...')
+            plot_curve(p1_win_rates, 'training step', f'win_rate / {TRAINING_STEP} games', \
+                       'agent training win rate', f'image_backup/zero/win_rate_{i + 1}.jpg')
+            print('=================================================')
 
 
-print(f"P1 win: {P1_win}/{EPISODE_NUM}")
-print(f"Rate: {P1_win/EPISODE_NUM}")
+
+print(f"P1 win rate: {P1_win}/{EPISODE_NUM} ({P1_win/EPISODE_NUM})")
 
 # print the reward of each episode
-plot_curve(p1_win_rates, 'training step', f'win_rate / {TRAINING_STEP} games', 'agent training win rate', 'training_win_rate.jpg')
+plot_curve(p1_win_rates, 'training step', f'win_rate / {TRAINING_STEP} games', \
+           'agent training win rate', 'zero_win_rate.jpg')
 
 # save model, be careful of filename (version)
 # torch.save(model_player1, path_P1)

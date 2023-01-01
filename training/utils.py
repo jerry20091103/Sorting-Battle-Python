@@ -99,10 +99,6 @@ def select_act(action, grid, choose_legal=True):
 
     return trans_action_id(action_id)
 
-# testing
-# game_state = [[1, 2, 3, 9], [-2, -1, 0, 8], [4, 5, 6, 7]]
-# print(normalize_game_state(game_state))
-
 def plot_curve(plot_data, x_label, y_label, title='', filename=''):
     """
     :param plot_data: data to be plotted

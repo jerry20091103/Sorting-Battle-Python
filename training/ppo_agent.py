@@ -6,8 +6,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions import MultivariateNormal
-from neural_network import NeuralNetwork
+from neural_network import NeuralNetwork    #, PolicyNetwork, ValueNetwork
 from buffer import Buffer
+
+agent_config = {
+    'num_channels': 1,
+    'channel_height': 10,
+    'channel_width': 5,
+    'num_output_channels': 16,
+    'num_value_hidden_channels': 16,
+}
 
 # model settings
 V_LR=1e-4
@@ -25,35 +33,54 @@ class PPOAgent():
         # step 1: initial policy & value parameters
         self.policy_network = NeuralNetwork(observation_dimension, action_dimension).cuda()
         self.value_network = NeuralNetwork(observation_dimension, 1).cuda()
-        if policy_network:
-            self.policy_network.load_state_dict(torch.load(policy_network))
-        if value_network:
-            self.value_network.load_state_dict(torch.load(value_network))
-        # self.policy_network = NeuralNetwork(observation_dimension, action_dimension)
-        # self.value_network = NeuralNetwork(observation_dimension, 1)
+        # self.policy_network = PolicyNetwork(agent_config['num_channels'],\
+        #                             agent_config['channel_height'], agent_config['channel_width'],\
+        #                             agent_config['num_output_channels'], action_dimension).cuda()
+        # self.value_network = ValueNetwork(agent_config['num_channels'],\
+        #                             agent_config['channel_height'], agent_config['channel_width'],\
+        #                             agent_config['num_value_hidden_channels']).cuda()
+
+        if policy_network and value_network:
+            self.load_model(policy_network, value_network)
 
         self.buffer = Buffer()
         self.cov_var = torch.full(size=(action_dimension,), fill_value=0.5)
         self.cov_mat = torch.diag(self.cov_var).cuda()
-        # self.cov_mat = torch.diag(self.cov_var)
 
         self.loss_func = nn.MSELoss()
         self.policy_optimizer = torch.optim.Adam(self.policy_network.parameters(), lr = P_LR)
         self.value_optimizer = torch.optim.Adam(self.value_network.parameters(), lr = V_LR)
         self.prev_score = 0
 
-    # def reset(self):
-    #     """
-    #     Reset previous score when starting a new game
-    #     """
-    #     self.prev_score = 0
+    def load_model(self, policy_network, value_network):
+        # print('load model...')
+        # print('policy network:', policy_network)
+        # print('value network:', value_network)
+        self.policy_network.load_state_dict(torch.load(policy_network))
+        self.value_network.load_state_dict(torch.load(value_network))
+
+    def save_model(self, policy_path, value_path):
+        # print('save model...')
+        # print('policy network:', policy_path)
+        # print('value network:', value_path)
+        torch.save(self.policy_network.state_dict(), policy_path)
+        torch.save(self.value_network.state_dict(), value_path)
+
+    def set_training_mode(self):
+        self.policy_network.train()
+        self.value_network.train()
+
+    def set_evaluation_mode(self):
+        self.policy_network.eval()
+        self.value_network.eval()
 
     def act(self, state):
         self.counter += 1
         grid = state["grid"]
         grid = [item for sublist in grid for item in sublist]
+        # grid = np.array(state["grid"]).reshape(agent_config['num_channels'], agent_config['channel_height'],\
+        #                              agent_config['channel_width'])
         grid = torch.tensor(grid, dtype=torch.float).cuda()
-        # grid = torch.tensor(grid, dtype=torch.float)
         action = self.policy_network(grid).detach()
 
         # Multivariate Normal Distribution for continuous action exploration
@@ -67,9 +94,6 @@ class PPOAgent():
         state = torch.tensor(self.buffer.states, dtype=torch.float).cuda()
         action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float).cuda()
         log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float).cuda()
-        # state = torch.tensor(self.buffer.states, dtype=torch.float)
-        # action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float)
-        # log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float)
 
         # step 4: compute rewards_to_go
         for episode_rewards in reversed(self.buffer.rewards):
@@ -79,7 +103,6 @@ class PPOAgent():
                 self.buffer.rewards_to_go.insert(0, discounted_reward)
 
         rewards_to_go = torch.tensor(self.buffer.rewards_to_go, dtype=torch.float).cuda()
-        # rewards_to_go = torch.tensor(self.buffer.rewards_to_go, dtype=torch.float)
 
         # step 5: compute advantage estimate A based on the current value function V
         V = self.value_network(state).detach().squeeze()

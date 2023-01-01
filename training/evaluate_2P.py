@@ -7,7 +7,7 @@ from sorting_battle_gym.game_base import GameBase
 from sorting_battle_gym.game_board_state import GameBoardState
 from training.ppo_agent import PPOAgent
 
-N_GAMES = 10
+N_GAMES = 50
 
 config = {
     'player_count': 2,
@@ -66,6 +66,7 @@ if player1 == 'ppo agent':
         value_path_1 = input('player1\'s value network path: ')
         try:
             model_player1 = PPOAgent(50, ACTION_SIZE, policy_path_1, value_path_1)
+            model_player1.set_evaluation_mode()
             success = True
         except:
             print('invalid path, try again...')
@@ -86,6 +87,7 @@ if player2 == 'ppo agent':
         value_path_2 = input('player2\'s value network path: ')
         try:
             model_player2 = PPOAgent(50, ACTION_SIZE, policy_path_2, value_path_2)
+            model_player2.set_evaluation_mode()
             success = True
         except Exception as e:
             print(e)

@@ -7,7 +7,7 @@ from sorting_battle_gym.game_base import GameBase
 from sorting_battle_gym.game_board_state import GameBoardState
 from training.ppo_agent import PPOAgent
 
-N_GAMES = 50
+N_GAMES = 10
 
 config = {
     'player_count': 2,
@@ -50,9 +50,9 @@ player1, player2 = '', ''
 policy_path_1, value_path_1 = '', ''
 policy_path_2, value_path_2 = '', ''
 
+print('============================================')
 print('A. random agent')
 print('B. ppo agent')
-
 while True:
     player1 = input('choose player 1 (A/B): ')
     if player1 in agent.keys():
@@ -70,10 +70,9 @@ if player1 == 'ppo agent':
             success = True
         except:
             print('invalid path, try again...')
-
+print('============================================')
 print('A. random agent')
 print('B. ppo agent')
-
 while True:
     player2 = input('choose player 2 (A/B): ')
     if player2 in agent.keys():
@@ -92,21 +91,18 @@ if player2 == 'ppo agent':
         except Exception as e:
             print(e)
             print('invalid path, try again...')
-print()
-
+print('============================================')
+print('Evaluation Info:')
 print(f'player1: {player1}')
 if policy_path_1 and value_path_1:
     print(f'- policy network: {policy_path_1}')
     print(f'- value network: {value_path_1}')
-
 print(f'player2: {player2}')
 if policy_path_2 and value_path_2:
     print(f'- policy network: {policy_path_2}')
     print(f'- value network: {value_path_2}')
-print()
-
+print('============================================')
 print(f'Start evaluating {N_GAMES} games...')
-
 n_player1_win, n_player2_win = 0, 0
 for _ in range(N_GAMES):
     game_base = GameBase(config)
@@ -120,17 +116,19 @@ for _ in range(N_GAMES):
         game_base.set_callback(player2_callback, 2)
     game_base.run_game()
     player1_status, player2_status = [state.game_board_state.status for state in game_base.game_state.player_states]
-
+    if _ == 0:
+        print('-----------------------------')
     if player1_status == GameBoardState.Status.WIN or player2_status == GameBoardState.Status.LOSE:
         n_player1_win += 1
-        print(f'Game {_ + 1}: player 1 wins')
+        print(f'- Game {_ + 1:02}: 1P wins')
     elif player2_status == GameBoardState.Status.WIN or player1_status == GameBoardState.Status.LOSE:
         n_player2_win += 1
-        print(f'Game {_ + 1}: player 2 wins')
+        print(f'- Game {_ + 1:02}: 2P wins')
     else:
         n_player1_win += 0.5
         n_player2_win += 0.5
-        print(f'Game {_ + 1}: draw')
-
+        print(f'- Game {_ + 1:02}: draw')
+print('-----------------------------')
 print(f'player1\'s win rate: {n_player1_win/N_GAMES} ({n_player1_win}/{N_GAMES})')
 print(f'player2\'s win rate: {n_player2_win/N_GAMES} ({n_player2_win}/{N_GAMES})')
+print('============================================')

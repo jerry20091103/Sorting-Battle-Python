@@ -48,18 +48,21 @@ class TestgGamePressureState:
         p2 = GamePressureState(100)
         p1.add_pressure(50)
         p2.add_pressure(50)
-        # Because P1 has 50 pressure, the 25 attack power will be used to reduce its own pressure.
+        # After reduced 25 pressure from P1, the attack power on P2 will be 25(original power) + 25(consumed pressure) = 50.
+        # P1's pressure will be 25, P2's pressure will be 100.
         p1.attack(p2, 25)
         assert p1.pressure == 25
-        assert p2.pressure == 50
-        # Here, after removing the remaining 25 pressure from P1, the remaining 5 attack power will be used on P2.
+        assert p2.pressure == 100
+        # Here, after removing the remaining 25 pressure from P1, the attack power will be 30(original power) + 25(consumed pressure) = 55.
+        # P1's pressure will be 0, P2's pressure will be 100(max).
         p1.attack(p2, 30)
         assert p1.pressure == 0
-        assert p2.pressure == 55
-        # And finally, this maximizes P2's pressure.
-        p1.attack(p2, 70)
-        assert p1.pressure == 0
         assert p2.pressure == 100
+        # Then P2 attack back
+        # P1's pressure will be 100, P2's pressure will be 30.
+        p2.attack(p1, 70)
+        assert p1.pressure == 100
+        assert p2.pressure == 30
 
     def test_get_pressure_rate(self):
         '''

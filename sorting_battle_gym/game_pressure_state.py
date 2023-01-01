@@ -31,11 +31,12 @@ class GamePressureState:
     def attack(self, other, attack_power):
         '''
         Attack another player by attack_power.
+        The rule is adjusted to attack the opponent with "attack_power + consumed_pressure".
         :param other: the GamePressureState object of the other player.
         :param attack_power: the attack power.
         '''
-        attack_power -= self.consume_pressure(attack_power)
-        other.add_pressure(attack_power)
+        consumed_pressure = self.consume_pressure(attack_power)
+        other.add_pressure(attack_power + consumed_pressure)
 
     def get_pressure_rate(self):
         '''

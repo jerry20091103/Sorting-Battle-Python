@@ -53,7 +53,8 @@ class VersusGameState(GameState):
                 attack_power = self.compute_attack_power(score_increase_info) \
             )
             # Reset target's pressure tick.
-            target.reset_pressure_tick()
+            if (target.game_board_state.game_pressure_state.pressure <= VersusGameState.PlayerState.MAX_PRESSURE_PER_ATTACK):
+                target.reset_pressure_tick()
 
         def compute_attack_power(self, score_increase_info):
             '''

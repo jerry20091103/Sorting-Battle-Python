@@ -37,7 +37,7 @@ def normalize_game_state(game_state):
     """
     new_game_state = dict()
     for key in game_state.keys():
-        if key == 'grid':
+        if key in ['grid', 'opponent_grid']:
             new_grid = np.array(game_state[key])
             new_grid = (new_grid - MIN_GRID)/(MAX_GRID - MIN_GRID)
             new_grid = list([list(row) for row in new_grid])

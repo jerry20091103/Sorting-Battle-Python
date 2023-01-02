@@ -7,8 +7,7 @@ from sorting_battle_gym.game_base import GameBase
 from sorting_battle_gym.game_board_state import GameBoardState
 from training.ppo_agent import PPOAgent
 
-N_GAMES = 10
-
+N_GAMES = 100
 config = {
     'player_count': 2,
     'player_swap_delay': 30,
@@ -16,10 +15,8 @@ config = {
     'player_add_new_row_delay': 20,
     'realtime': False
 }
-
 agent = {'A': 'random agent', 'a': 'random agent',
          'B': 'ppo agent', 'b': 'ppo agent'}
-
 def player1_callback(game_state):
     """
     Player1's callback function
@@ -32,7 +29,6 @@ def player1_callback(game_state):
     # convert the action to the format that the gym can understand
     action_type, action_data = select_act(action, game_state["grid"])
     return action_type, action_data
-
 def player2_callback(game_state):
     """
     Player2's callback function
@@ -69,7 +65,7 @@ if player1 == 'ppo agent':
             model_player1.set_evaluation_mode()
             success = True
         except:
-            print('invalid path, try again...')
+            print('please try again...')
 print('============================================')
 print('A. random agent')
 print('B. ppo agent')
@@ -85,13 +81,14 @@ if player2 == 'ppo agent':
         policy_path_2 = input('player2\'s policy network path: ')
         value_path_2 = input('player2\'s value network path: ')
         try:
-            model_player2 = PPOAgent(50, ACTION_SIZE, policy_path_2, value_path_2)
+            model_player2 = PPOAgent(100, ACTION_SIZE, policy_path_2, value_path_2)
             model_player2.set_evaluation_mode()
             success = True
         except Exception as e:
             print(e)
-            print('invalid path, try again...')
+            print('please try again...')
 print('============================================')
+
 print('Evaluation Info:')
 print(f'player1: {player1}')
 if policy_path_1 and value_path_1:
@@ -102,6 +99,7 @@ if policy_path_2 and value_path_2:
     print(f'- policy network: {policy_path_2}')
     print(f'- value network: {value_path_2}')
 print('============================================')
+
 print(f'Start evaluating {N_GAMES} games...')
 n_player1_win, n_player2_win = 0, 0
 for _ in range(N_GAMES):

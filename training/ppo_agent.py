@@ -9,13 +9,6 @@ from torch.distributions import MultivariateNormal
 from neural_network import NeuralNetwork    #, PolicyNetwork, ValueNetwork
 from buffer import Buffer
 
-agent_config = {
-    'num_channels': 1,
-    'channel_height': 10,
-    'channel_width': 5,
-    'num_output_channels': 16,
-    'num_value_hidden_channels': 16,
-}
 
 # model settings
 V_LR=1e-4
@@ -33,13 +26,7 @@ class PPOAgent():
         # step 1: initial policy & value parameters
         self.policy_network = NeuralNetwork(observation_dimension, action_dimension).cuda()
         self.value_network = NeuralNetwork(observation_dimension, 1).cuda()
-        # self.policy_network = PolicyNetwork(agent_config['num_channels'],\
-        #                             agent_config['channel_height'], agent_config['channel_width'],\
-        #                             agent_config['num_output_channels'], action_dimension).cuda()
-        # self.value_network = ValueNetwork(agent_config['num_channels'],\
-        #                             agent_config['channel_height'], agent_config['channel_width'],\
-        #                             agent_config['num_value_hidden_channels']).cuda()
-
+        
         if policy_network and value_network:
             self.load_model(policy_network, value_network)
 
@@ -78,10 +65,11 @@ class PPOAgent():
         self.counter += 1
         grid = state["grid"]
         grid = [item for sublist in grid for item in sublist]
-        # grid = np.array(state["grid"]).reshape(agent_config['num_channels'], agent_config['channel_height'],\
-        #                              agent_config['channel_width'])
-        grid = torch.tensor(grid, dtype=torch.float).cuda()
-        action = self.policy_network(grid).detach()
+        opp_grid = state["opponent_grid"]
+        opp_grid = [item for sublist in opp_grid for item in sublist]
+        features = grid + opp_grid
+        features = torch.tensor(features, dtype=torch.float).cuda()
+        action = self.policy_network(features).detach()
 
         # Multivariate Normal Distribution for continuous action exploration
         dist = MultivariateNormal(action, self.cov_mat)

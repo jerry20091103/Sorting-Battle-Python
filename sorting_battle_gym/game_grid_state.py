@@ -1,3 +1,6 @@
+'''
+This module contains the inherited game state for the endless 1p mode
+'''
 import random
 from math import floor
 from sorting_battle_gym.game_tile_state import GameTileState
@@ -141,6 +144,13 @@ class GameGridState:
             for column in range(self.column_count):
                 self.grid[row][column].val = grid_values[row][column]
 
+    def get_grid(self):
+        '''
+        Get the grid in 2D list.
+        :return: the grid in 2D list.
+        '''
+        return [[tile.val for tile in row] for row in self.grid]
+
     def pull_down(self, column):
         '''
         Pull down the column.
@@ -225,4 +235,3 @@ class GameGridState:
                 if self.grid[row][column].val != other.grid[row][column].val:
                     return False
         return True
-    

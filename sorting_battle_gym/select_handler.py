@@ -1,3 +1,6 @@
+'''
+This module is for select command.
+'''
 class SelectHandler:
     '''
     SelectHandler handles the select command of player or agent.
@@ -50,6 +53,12 @@ class SelectHandler:
         if coords[0][0] < 0 or coords[0][0] >= self.game_grid_state.row_count or \
            coords[0][1] < 0 or coords[0][1] >= self.game_grid_state.column_count or \
            not self.game_grid_state.is_number(coords[0]):
+            return False
+        # then coords[-1]
+        # check is in board and is number
+        if coords[-1][0] < 0 or coords[-1][0] >= self.game_grid_state.row_count or \
+           coords[-1][1] < 0 or coords[-1][1] >= self.game_grid_state.column_count or \
+           not self.game_grid_state.is_number(coords[-1]):
             return False
 
         # set and check direction

@@ -1,5 +1,5 @@
 # sorting_battle_gym package
-> NOTE: There is now a interactive terminal version of the game. You can play it by running `python 1p_terminal_game.py` in the **game folder**. 
+> NOTE: There is now a interactive terminal version of the game. You can play it by running `python terminal_game_1p.py` or `python terminal_game_2p.py` in the **game folder**. 
 ## GameBase class
 ### variables
 - config: dict for GameBase constructor:
@@ -8,6 +8,7 @@ dict config {
     'player_count': int # 1 or 2
     'player_swap_delay': int # simulated delay for AI in ticks
     'player_select_delay': int # simulated delay for AI in ticks
+    'player_add_new_row_delay': int # simulated delay for AI in ticks
     'realtime': bool # whether to run the game in realtime
     # Each tick is 1/50 second (0.02 second)
 }
@@ -25,7 +26,17 @@ dict game_status {
 - game_status_2p: dict passed to the agent callback function in **2P mode**:
 ```python
 dict game_status_2p {
-    # TBD
+    'game_end': int # 0 for not end, 1 for lose
+    'level': int # current level of game
+    'pressure': int # current pressure of the player
+    'grid': 2D-list of int # current grid of the player 
+                           # where -1 is empty, -2 is garbage, other valid values are >= 0
+    'score': int # current score of the player
+    'oppoent_pressure': int # current pressure of the opponent
+    'opponent_grid': 2D-list of int # current grid of the opponent
+                                    # where -1 is empty, -2 is garbage, other valid values are >= 0
+    'opponent_score': int # current score of the opponent
+    'win_flag': int # 0 for not lose, 1 for win (this is only valid when game_end == 1)
 }
 ```
 ### Public Method
@@ -46,10 +57,11 @@ def agent_callback(game_status):
     :param game_status: dict, the current status of the game (see above)
     
     :return action_type, action_data: 
-        action_type: int, 0 for idle, 1 for swap, 2 for select
+        action_type: int, 0 for idle, 1 for swap, 2 for select, 3 for add_new_row
         action_data: for idle: int, number of ticks to idle
                      for swap: list of 2 tuples, [(row1, column1), (row2, column2)]
                      for select: list of tuples,  [(row, column), ...]
+                     for add_new_row: []
     '''
     # do stuff
     return action_type, action_data
@@ -82,6 +94,7 @@ config = {
     'player_count': 1,
     'player_swap_delay': 10,
     'player_select_delay': 50,
+    'player_add_new_row_delay': 50,
     'realtime': False
 }
 game_base = GameBase(config)
@@ -134,6 +147,7 @@ config = {
     'player_count': 2
     'player_swap_delay': 10,
     'player_select_delay': 50,
+    'player_add_new_row_delay': 50,
     'realtime': False
 }
 game_base = GameState(config)

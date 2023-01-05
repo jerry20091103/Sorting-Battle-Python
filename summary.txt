@@ -1,0 +1,85 @@
+terminal_game_1p: "GameBase()", with player_count=1
+    GameBase(): "GameBoardState()", with game_board_config
+        GameBoardState(): "GameGridState()", with some config
+            GameGridState(): lots of "GameTileState()"
+        GameBoardState(): "GameScoreState()", with some config
+        GameBoardState(): "GameControllerState()", with game_grid_state and game_score_state
+            GameControllerState(): "SelectHandler()" and "SwapHandler"
+        GameBoardState(): "GamePressureState()"
+        GameBoardState(): set status as INACTIVE
+    GameBase(): "Endless1PGameState()", with game_board
+        GameState(): set current_tick = 0
+        GameState(): create queue.PriorityQueue()
+        GameState(): set level = 0
+        GameState(): game_over = False
+        GameState(): end_scheduler = False
+        Endless1PGameState(): self.game_board_state = game_board_state
+        Endless1PGameState(): self.empty_row_percentage = empty_row_percentage
+        Endless1PGameState(): self.player_callback = None
+        Endless1PGameState(): self.init_tasks()
+            GameState().init_tasks(): push level_up_task
+            GameState().init_tasks(): push push_new_row_task
+            Endless1PGameState().init_tasks(): push load_task
+            Endless1PGameState().init_tasks(): push player_callback_task
+terminal_game_1p: game_base.set_callback(player1_callback)
+    GameBase.set_callback(): game_state.set_player_callback()
+        Endless1PGameState().set_player_callback(): set player callback
+terminal_game_1p: run_game()
+    GameBase.run_game(): game_state.run_game()
+        GameState().run_game(): run scheduler
+
+
+terminal_game_2p: "GameBase()", with player_count=2
+    GameBase(): P1 "GameBoardState()", with game_board_config
+        GameBoardState(): "GameGridState()", with some config
+        GameBoardState(): "GameScoreState()", with some config
+        GameBoardState(): "GameControllerState()", with game_grid_state and game_score_state
+        GameBoardState(): "GamePressureState()"
+        GameBoardState(): set status as INACTIVE
+    GameBase(): P2 "GameBoardState()", with game_board_config
+        GameBoardState(): "GameGridState()", with some config
+        GameBoardState(): "GameScoreState()", with some config
+        GameBoardState(): "GameControllerState()", with game_grid_state and game_score_state
+        GameBoardState(): "GamePressureState()"
+        GameBoardState(): set status as INACTIVE
+!!! now there are p1_game_board and p2_game_board in GameBase
+    GameBase(): "Endless2PGameState()", with p1_game_board and p2_game_board
+        GameState(): set current_tick = 0
+        GameState(): create queue.PriorityQueue()
+        GameState(): set level = 0
+        GameState(): game_over = False
+        GameState(): end_scheduler = False
+        VersusGameState(): self.player_states = []
+        Endless2PGameState(): self.init_tasks()
+            GameState().init_tasks(): push level_up_task
+            GameState().init_tasks(): push push_new_row_task
+        Endless2PGameState(): self.register_player(), with p1_game_board
+            Endless2PGameState().register_player(): "PlayerState()" with self and p1_game_board
+                PlayerState(): self.game_state = game_state
+                PlayerState(): self.game_board_state = game_board_state
+                PlayerState(): self.player_callback = None
+                PlayerState(): push load_task
+                # TODO: maybe push player_callback_tack here
+                PlayerState(): push check_receive_garbage_task
+                PlayerState(): game_board_state.game_score_state.set_score_increase_callback(self.attack)
+            Endless2PGameState().register_player(): append PlayerState into player_states[]
+!!! now PlayerState of p1 is created and registered
+        Endless2PGameState(): self.register_player(), with p2_game_board
+            Endless2PGameState().register_player(): "PlayerState()" with self and p2_game_board
+                PlayerState(): self.game_state = game_state
+                PlayerState(): self.game_board_state = game_board_state
+                PlayerState(): self.player_callback = None
+                PlayerState(): push load_task
+                # TODO: maybe push player_callback_tack here
+                PlayerState(): push check_receive_garbage_task
+                PlayerState(): game_board_state.game_score_state.set_score_increase_callback(self.attack)
+            Endless2PGameState().register_player(): append PlayerState into player_states[]
+!!! now PlayerState of p2 is created and registered
+terminal_game_2p: 
+
+terminal_game_1p: game_base.set_callback(player1_callback)
+    GameBase.set_callback(): game_state.set_player_callback()
+        Endless1PGameState().set_player_callback(): set player callback
+terminal_game_1p: run_game()
+    GameBase.run_game(): game_state.run_game()
+        GameState().run_game(): run scheduler

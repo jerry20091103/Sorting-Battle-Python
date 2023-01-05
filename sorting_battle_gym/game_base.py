@@ -4,6 +4,7 @@ Only this module should be imported by outside code.
 '''
 from sorting_battle_gym.game_board_state import GameBoardState
 from sorting_battle_gym.endless_1p_game_state import Endless1PGameState
+from sorting_battle_gym.endless_2p_game_state import Endless2PGameState
 
 class GameBase:
     '''
@@ -37,10 +38,13 @@ class GameBase:
         # init a GameState object
         if self.player_count == 1:
             game_board = GameBoardState(GameBase.game_board_config)
-            self.game_state = Endless1PGameState(game_board, config['player_swap_delay'], config['player_select_delay'])
+            self.game_state = Endless1PGameState(game_board, config['player_swap_delay'],
+                                                config['player_select_delay'],
+                                                config['player_add_new_row_delay'])
         elif self.player_count == 2:
-            raise NotImplementedError
-            # TODO implement 2P game
+            p1_game_board = GameBoardState(GameBase.game_board_config)
+            p2_game_board = GameBoardState(GameBase.game_board_config)
+            self.game_state = Endless2PGameState(p1_game_board, p2_game_board, config['player_swap_delay'], config['player_select_delay'], config['player_add_new_row_delay'])
         else:
             raise ValueError('player_count must be 1 or 2')
 
@@ -54,7 +58,7 @@ class GameBase:
     def set_callback(self, callback, player_id=1):
         '''
         sets the callback function to be called when the player can take action
-        :param callback: the callback function 
+        :param callback: the callback function
                          (refer to the README for the callback function signature)
         :param player_id: the player id (1 or 2)
         '''

@@ -3,7 +3,7 @@ import sys
 import os
 from pylint import lint  
 
-THRESHOLD = 7
+THRESHOLD = 8
 
 test_files = [os.path.join('sorting_battle_gym', file) for file in os.listdir('sorting_battle_gym')]
 test_files.extend([os.path.join('training', file) for file in os.listdir('training')])

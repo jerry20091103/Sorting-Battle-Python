@@ -5,6 +5,7 @@
     - int player_count
     - int player_swap_delay 
     - int player_select_delay
+    - int player_add_new_row_delay
     - bool realtime
 }
 - int player_count
@@ -17,7 +18,7 @@
     - call the run_game() of the game mode
 - void set_callback(callback cb, int player_id=1)
     - call the set_player_callback() of the game mode
-## GameState (abc)
+## GameState (ABC)
 ### var
 - int current_tick
 - queue.PriorityQueue task_queue
@@ -26,7 +27,7 @@
 - int level
 - bool game_over
 ### method
-- GameState(player_swap_delay, player_select_delay) **(abstract)**
+- GameState(player_swap_delay, player_select_delay, player_add_new_row_delay) **(abstract)**
 - void run_game(bool realtime)
     - a blocking function that runs the game until it ends.
     - runs the scheduler to execute tasks
@@ -38,9 +39,11 @@
     - task to end the game
     - also clears the scheduler
 - vodi game_end() **(abstract)**
-    - end the game
+    - notify the players that the game is over
 - void push_new_row_task() **(abstract)**
     - task to push new row to the game board
+- void push_one_row_task() **(abstract)**
+    - task to push one row for the player
 - void set_player_callback(callback cb, int player_id=1) **(abstract)**
     - sets the callback function to be called when the player can take action
 - bool check_player_callback() **(abstract)**
@@ -60,8 +63,9 @@
 - float empty_row_percentage = 0.8
 - callback player_callback
 ### methods
-- Endless1PGameState(GameBoardState game_board_state, int player_swap_delay, int player_select_delay, float empty_row_percentage=0.8)
+- Endless1PGameState(GameBoardState game_board_state, int player_swap_delay, int player_select_delay, int player_add_new_row_delay, float empty_row_percentage=0.8)
 - void push_new_row_task() **(override)**
+- void push_one_row_task() **(override)**
 - bool check_player_callback() **(override)**
     - check if player_callback is set
 - void set_player_callback(callback cb, int player_id=1) **(override)**
@@ -75,6 +79,67 @@
     - notify the player that the game is over
 - void load_task()
     - task to load the game board with ramdom numbers
+
+## VersusGameState (GameState)
+### PlayerState (subclass)
+#### var
+- GameBoardState game_board_state
+- VersusGameState game_state
+- int last_pressure_tick = 0
+- const int PRESSURE_TICK_DURATION = 120
+- const int MAX_PRESSURE_PER_ATTACK = 20
+- const int GARBAGE_PER_ADDITIONAL_ROW = 10
+- callback player_callback
+    - callback to be called when the agent can take action
+    - initialize to None
+#### method
+- PlayerState(VersusGameState game_state, GameBoardState game_board_state)
+    - remember to set attack() into on_score_increase_callback in GameScoreState
+- void reset_pressure_tick()
+- void attack(score_increase_info)
+    - needs to be called by GameScoreState when score increases
+- int compute_attack_power(score_increase_info)
+- (int, int) compute_attack_load(int pressure_consumed)
+    - returns (num_garbage_rows, num_garbage_columns)
+- void load_task()
+    - task to load the game board with ramdom numbers
+- void check_recieve_garbage_task()
+    - check if the player needs to recieve garbage from pressure
+### main class
+#### var
+- List[PlayerState] player_states
+#### method
+- VersusGameState(int player_swap_delay, int player_select_delay, int player_add_new_row_delay)
+- void register_player(GameBoardState game_board_state)
+    - register a new player
+- PlayerState find_target(PlayerState attacker) **(virtual)**
+    - find a valid target for the attacker
+- void on_draw() **(abstract)**
+- void check_game_result_state() **(virtual)**
+    - Method to invoke to check if the game has been decided
+- void game_end() **(override)**
+    - notify the players that the game is over
+- void push_new_row_task() **(override)**
+    - VersusGameState's PushNewRowEvent implementation. Uses PlayerState.
+- void push_one_row_task() **(override)**
+- bool check_player_callback() **(override)**
+    - check if all player callbacks are set
+- void set_player_callback(callback cb, int player_id=1) **(override)**
+    - set the callback for the player
+
+## Endless2PGameState (VersusGameState)
+### var
+### method
+- Endless2PGameState(
+    GameBoardState p1_game_board_state, 
+    GameBoardState p2_game_board_state
+    )
+- int get_tick_between_new_row() **(override)**
+    - rows appear less frequently in 2P mode
+- void on_draw() **(override)**
+- void player_callback_task(int player_id) **(override)**
+
+---
 
 ## GameBoardState
 ### var
@@ -92,6 +157,13 @@
 - np.random_instance
 - GameControllerState game_controller_state
 - GameScoreState game_score_state
+- GamePressureState gamePressureState
+- class Status(Enum)
+    - ACTIVE
+    - INACTIVE
+    - WIN
+    - LOSE
+- Status status
 ### method
 - GameBoardState(dict config)
 - bool push_new_row(int number_of_columns)
@@ -134,6 +206,8 @@
 - void load_row(int row_id, list row_values)
 - void load_column(int column_id, list column_values)
 - void load_grid(list grid_values) # gridValues is a 2D-list
+- list[][] get_grid()
+    - returns a 2D-list of tile numbers
 - void pull_down(int column)
 - void swap(Coord coord1, Coord coord2)
 - void swap_and_pull_down(Coord coord1, Coord coord2)
@@ -176,9 +250,25 @@
     int minimum_remove_count, base_remove_score, max_effective_combo, remove_length_bonus
     float combo_score_step
 }
+- list on_score_increase_callback
+    - callback functions like attack() can be placed here
+    - initialize to empty list
 ### method
 - GameScoreState(dict config)
 - void on_remove(int remove_count)
+    - This method should be called when a remove is made
+- void register_combo(int remove_count)
+- void reset_combo()
+- void set_score_increase_callback(callback cb)
 
 ## GamePressureState
-### TODO
+### var
+- int pressure
+- int max_pressure
+- ~~float pressure_rate~~ (probably for unity, tedious to maintain in python)
+### method
+- GamePressureState(int max_pressure=40)
+- int consume_pressure(int amount)
+- void add_pressure(int amount)
+- void attack(GamePressureState other, int attackPower)
+- float get_pressure_rate() # in case anyone need pressure_rate

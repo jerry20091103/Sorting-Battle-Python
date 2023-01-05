@@ -1,3 +1,6 @@
+'''
+This module contains GameTileState class.
+'''
 class GameTileState:
     '''
     The is currently a empty class to fool the testbench.

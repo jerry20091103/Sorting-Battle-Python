@@ -1,3 +1,6 @@
+'''
+This module is for swap command.
+'''
 class SwapHandler:
     '''
     SwapHandler handles the swap command of player or agent.

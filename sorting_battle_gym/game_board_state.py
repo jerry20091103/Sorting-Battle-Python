@@ -1,16 +1,26 @@
 '''
 This module contains the GameBoardState class.
 '''
+from enum import Enum
 import numpy as np
 from sorting_battle_gym.game_grid_state import GameGridState
 from sorting_battle_gym.game_score_state import GameScoreState
 from sorting_battle_gym.game_controller_state import GameControllerState
-# todo: from sorting_battle_gym.game_pressure_state import GamePressureState
+from sorting_battle_gym.game_pressure_state import GamePressureState
 
 class GameBoardState:
     '''
     GameBoardState represents a board. A game can have multiple boards.
     '''
+    class Status(Enum):
+        '''
+        Represents the status of a GameBoardState.
+        '''
+        ACTIVE = 0
+        INACTIVE = 1
+        WIN = 2
+        LOSE = 3
+
     def __init__(self, config):
         '''
         Initialize a GameBoardState object.
@@ -45,7 +55,9 @@ class GameBoardState:
             self.game_score_state,
             config['minimum_sorted_length']
         )
-        self.game_pressure_state = None # todo: GamePressureState()
+        self.game_pressure_state = GamePressureState()
+        # chocola-mint did not assign initial status in C#. Use INACTIVE for now.
+        self.status = GameBoardState.Status.INACTIVE
 
     def push_new_row(self, number_of_columns):
         '''

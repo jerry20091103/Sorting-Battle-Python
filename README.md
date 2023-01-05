@@ -12,7 +12,9 @@ The Python repo for Sorting Battle the game.
 ## game
 - This folder contains simple terminal version of the game for testing.
 - 1P version:
-    - You can play it by running `python 1p_terminal_game.py` in the **game folder**.
+    - Run `python terminal_game_1p.py` in the **game folder**.
+- 2P version:
+    - Run `python terminal_game_2p.py` in the **game folder**.
 
 ## Contributing :)
 - The `main` branch is protected, so you need use the `dev` branch or create a new branch, and make a pull request to merge it.

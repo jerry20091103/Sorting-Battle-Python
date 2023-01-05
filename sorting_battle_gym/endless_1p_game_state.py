@@ -2,7 +2,6 @@
 This module contains the inherited game state for the endless 1p mode
 '''
 from sorting_battle_gym.game_state import GameState
-from sorting_battle_gym.game_state import Coord
 
 class Endless1PGameState(GameState):
     '''
@@ -14,13 +13,14 @@ class Endless1PGameState(GameState):
         game_board_state,
         player_swap_delay,
         player_select_delay,
+        player_add_new_row_delay,
         empty_row_percentage=0.8,
         ):
         '''
         Constructor with config.
         '''
         # call base class constructor
-        super().__init__(player_swap_delay, player_select_delay)
+        super().__init__(player_swap_delay, player_select_delay, player_add_new_row_delay)
         # init game specific parameters
         self.game_board_state = game_board_state
         self.empty_row_percentage = empty_row_percentage
@@ -41,7 +41,22 @@ class Endless1PGameState(GameState):
             # give the player one last callback to notify the game is over
             self.game_end()
             # schedule the last task
-            self.push_task(0, self.gamer_over_task)
+            self.push_task(0, self.game_over_task)
+
+    def push_one_row_task(self, player_id):
+        '''
+        Push one row to the game board
+        '''
+        assert player_id == 1, "only player 1 is supported"
+        overflow = self.game_board_state.push_new_row(
+            self.game_board_state.game_grid_state.column_count - 1
+        )
+        if overflow:
+            self.game_over = True
+            # give the player one last callback to notify the game is over
+            self.game_end()
+            # schedule the last task
+            self.push_task(0, self.game_over_task)
 
     def check_player_callback(self):
         '''
@@ -61,10 +76,7 @@ class Endless1PGameState(GameState):
         handles the player callback.
         '''
         assert player_id == 1, "only player 1 is supported"
-        # convert the grid
-        # todo : this is a bit ugly. Maybe implement get_gird() in GameGirdState?
-        game_grid = self.game_board_state.game_grid_state.grid
-        grid_2d_list = [[tile.val for tile in row] for row in game_grid]
+        grid_2d_list = self.game_board_state.game_grid_state.get_grid()
         # call the player callback
         action_type, action_data = self.player_callback({
             "game_end": self.game_over,
@@ -75,31 +87,7 @@ class Endless1PGameState(GameState):
         if self.game_over:
             return
         # handle the action
-        try:
-            action_delay = 0
-            if action_type == 0: # idle
-                action_delay = action_data
-            elif action_type == 1: # swap
-                assert len(action_data) == 2, "action_data must contain 2 coordinates when swapping"
-                coord1 = Coord(action_data[0][0], action_data[0][1])
-                coord2 = Coord(action_data[1][0], action_data[1][1])
-                assert self.game_board_state.game_controller_state.swap([coord1, coord2]), "invalid swap"
-                action_delay = self.player_swap_delay
-                # todo: get the swap is valid or not for the player?
-            elif action_type == 2: # select
-                assert action_data is not None, "action_data must not be None when selecting"
-                (tile_number, garbage_number) = self.game_board_state.game_controller_state.select(action_data)
-                action_delay = self.player_select_delay
-                assert tile_number > 0, "invalid select"
-            # schedule the next callback
-            self.push_task(action_delay, self.player_callback_task, player_id)
-        except AssertionError as e:
-            # pause the game and show the error message
-            print("[ERROR] in player_callback_task:", e)
-            # print action type and data
-            print("action_type:", action_type, ", action_data:", action_data)
-            input("The previous callback wiil be sent again. Press any key to continue...")
-            self.push_task(0, self.player_callback_task, player_id)
+        self.handle_player_action(self, 1, action_type, action_data)
 
     def init_tasks(self):
         '''
@@ -111,7 +99,7 @@ class Endless1PGameState(GameState):
         # load the initial grid
         self.push_task(0, self.load_task)
         # schedule first player callback
-        self.push_task(0, self.player_callback_task, 1)
+        self.push_task(1, self.player_callback_task, 1)
 
     def game_end(self):
         '''

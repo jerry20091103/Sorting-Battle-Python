@@ -1,3 +1,6 @@
+'''
+This module contains GamePressureState class.
+'''
 class GamePressureState:
     '''
     GamePressureState handles a player's pressure state in a game.

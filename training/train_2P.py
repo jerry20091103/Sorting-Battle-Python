@@ -58,11 +58,11 @@ def player1_callback(game_state, to_print=False):
     else:
         reward = game_state["score"] - model_player1.prev_score - LEGAL_ACT_COST
         model_player1.prev_score = game_state["score"]
-  
+
     if to_print:
         print("Reward: " + str(reward))
     model_player1.buffer.episode_rewards.append(reward)
-    
+
     # give the action to the gym
     if to_print:
         print(f'In P1, action_type: {action_type}, action_data: {action_data}')
@@ -111,7 +111,7 @@ for i in range(10000, 10000 + EPISODE_NUM):
             for player_states in [player1_states, player2_states]]
     player1_status, player2_status = [player_states.game_board_state.status\
             for player_states in [player1_states, player2_states]]
-        
+
     if i == 0:
         print("=================================================")
     print(f"EPISODE_NUM: {i + 1}/{10000 + EPISODE_NUM}")
@@ -144,4 +144,3 @@ for i in range(10000, 10000 + EPISODE_NUM):
         # print(f'image_backup/zero/win_rate_{i + 1}.jpg')
         print('=================================================')
         P1_win = 0
-

@@ -26,7 +26,7 @@ class PPOAgent():
         # step 1: initial policy & value parameters
         self.policy_network = NeuralNetwork(observation_dimension, action_dimension).cuda()
         self.value_network = NeuralNetwork(observation_dimension, 1).cuda()
-        
+
         if policy_network and value_network:
             self.load_model(policy_network, value_network)
 
@@ -40,6 +40,9 @@ class PPOAgent():
         self.prev_score = 0
 
     def load_model(self, policy_network, value_network):
+        """
+        load model
+        """
         # print('load model...')
         # print('policy network:', policy_network)
         # print('value network:', value_network)
@@ -47,6 +50,9 @@ class PPOAgent():
         self.value_network.load_state_dict(torch.load(value_network))
 
     def save_model(self, policy_path, value_path):
+        """
+        save model
+        """
         # print('save model...')
         # print('policy network:', policy_path)
         # print('value network:', value_path)
@@ -54,14 +60,23 @@ class PPOAgent():
         torch.save(self.value_network.state_dict(), value_path)
 
     def set_training_mode(self):
+        """
+        set training mode
+        """
         self.policy_network.train()
         self.value_network.train()
 
     def set_evaluation_mode(self):
+        """
+        set evaluation mode
+        """
         self.policy_network.eval()
         self.value_network.eval()
 
     def act(self, state):
+        """
+        agent's do an action
+        """
         self.counter += 1
         grid = state["grid"]
         grid = [item for sublist in grid for item in sublist]
@@ -79,6 +94,9 @@ class PPOAgent():
         return action.data.cpu().numpy(), log_prob
 
     def update_network(self):
+        """
+        update network
+        """
         state = torch.tensor(self.buffer.states, dtype=torch.float).cuda()
         action = torch.tensor(np.array(self.buffer.actions), dtype=torch.float).cuda()
         log_prob = torch.tensor(self.buffer.log_probs, dtype=torch.float).cuda()

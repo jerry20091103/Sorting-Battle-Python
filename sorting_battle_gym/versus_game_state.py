@@ -1,3 +1,6 @@
+'''
+This module contains the inherited game state for the versus mode.
+'''
 from abc import abstractmethod
 import numpy as np
 from sorting_battle_gym.game_state import GameState
@@ -201,7 +204,7 @@ class VersusGameState(GameState):
         # if the game is not over...
         else:
             self.push_task(self.get_tick_between_new_row(), self.push_new_row_task)
-    
+
     def push_one_row_task(self, player_id):
         '''
         Add a new row to the game board

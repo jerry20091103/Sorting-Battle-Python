@@ -2,11 +2,10 @@
 This is a interactive terminal version of the 1P game for testing.
 Also serves as an example of how to use the gym
 '''
-# add include path
 import sys
 sys.path.append("../")
-from sorting_battle_gym.game_base import GameBase
 from terminal_game_util import *
+from sorting_battle_gym.game_base import GameBase
 
 def player1_callback(game_status):
     '''

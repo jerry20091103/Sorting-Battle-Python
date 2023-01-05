@@ -1,13 +1,13 @@
-import sys
-import copy
 '''
 This module contains common utility functions for training.
 '''
+import sys
+import copy
 import numpy as np
+import matplotlib.pyplot as plt
 sys.path.append("../")
 from sorting_battle_gym.game_board_state import GameBoardState
 from training.action_table import ACTION_TABLE
-import matplotlib.pyplot as plt
 
 game_board_config = {
   'seed' : None,

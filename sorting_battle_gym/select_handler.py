@@ -1,3 +1,6 @@
+'''
+This module is for select command.
+'''
 class SelectHandler:
     '''
     SelectHandler handles the select command of player or agent.

@@ -1,3 +1,6 @@
+'''
+This module contains the inherited game state for the endless 1p mode
+'''
 import random
 from math import floor
 from sorting_battle_gym.game_tile_state import GameTileState

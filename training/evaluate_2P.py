@@ -1,6 +1,9 @@
+'''
+This script is used to evaluate the performance of 2P models
+'''
+import torch
 import sys
 sys.path.append("../")
-import torch
 from training.utils import select_act, normalize_game_state, ACTION_SIZE
 from training.random_play import random_player_callback
 from sorting_battle_gym.game_base import GameBase
@@ -106,11 +109,11 @@ for _ in range(N_GAMES):
     game_base = GameBase(config)
     if player1 == 'random agent':
         game_base.set_callback(random_player_callback, 1)
-    else:   
+    else:
         game_base.set_callback(player1_callback, 1)
     if player2 == 'random agent':
         game_base.set_callback(random_player_callback, 2)
-    else:   
+    else:
         game_base.set_callback(player2_callback, 2)
     game_base.run_game()
     player1_status, player2_status = [state.game_board_state.status for state in game_base.game_state.player_states]

@@ -8,7 +8,6 @@ from training.utils import select_act, normalize_game_state, ACTION_SIZE
 from sorting_battle_gym.game_base import GameBase
 from training.ppo_agent import PPOAgent
 
-
 # training settings
 UPDATE_INTERVAL=8
 EPISODE_NUM=10
@@ -57,9 +56,9 @@ def player1_callback(game_state):
 
 model_player1 = PPOAgent(50, ACTION_SIZE)
 # or load model
-# model_player1 = torch.load(path)
+# model_player1 = torch.load(PATH)
 
-accumulated_score = 0
+ACCUMULATED_SCORE = 0
 with open('training_log_1P.txt', 'w') as f:
     for i in range(EPISODE_NUM):
         game_base = GameBase(config)
@@ -67,7 +66,7 @@ with open('training_log_1P.txt', 'w') as f:
         game_base.set_callback(player1_callback, 1)
         # run the game
         game_base.run_game()
-        accumulated_score += game_base.game_state.game_board_state.game_score_state.total_score
+        ACCUMULATED_SCORE += game_base.game_state.game_board_state.game_score_state.total_score
         print("=================================================")
         print("EPISODE_NUM: " + str(i))
         print("score: " + str(game_base.game_state.game_board_state.game_score_state.total_score))
@@ -78,10 +77,10 @@ with open('training_log_1P.txt', 'w') as f:
         print("EPISODE_NUM: " + str(i), file = f)
         print("score: " + str(game_base.game_state.game_board_state.game_score_state.total_score),\
               file = f)
-    print("Average score: " + str(accumulated_score / EPISODE_NUM))
+    print("Average score: " + str(ACCUMULATED_SCORE / EPISODE_NUM))
 
 # save model, be careful of filename (version)
-model_save_folder = 'model/'
-model_save_name = 'training_model_1P_v0.pt'
-path = model_save_folder + model_save_name
-torch.save(model_player1, path)
+MODEL_SAVE_FOLDER = 'model/'
+MODEL_SAVE_NAME = 'training_model_1P_v0.pt'
+PATH = MODEL_SAVE_FOLDER + MODEL_SAVE_NAME
+torch.save(model_player1, PATH)

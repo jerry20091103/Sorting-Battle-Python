@@ -11,7 +11,9 @@ IDLE_TIME=8
 EPISODE_NUM=10
 
 def random_player_callback(game_state):
-    # the model gets the current state of the game
+    '''
+    the model gets the current state of the game
+    '''
     grid = game_state['grid']
 
     legal_action_space = []

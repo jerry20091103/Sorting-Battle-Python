@@ -1,7 +1,6 @@
 '''
 This script is used to evaluate the performance of 2P models
 '''
-import torch
 import sys
 sys.path.append("../")
 from training.utils import select_act, normalize_game_state, ACTION_SIZE
@@ -59,14 +58,14 @@ while True:
         break
     print('input "A" or "B", lowercase is also acceptable')
 if player1 == 'ppo agent':
-    success = False
-    while not success:
+    SUCCESS = False
+    while not SUCCESS:
         policy_path_1 = input('player1\'s policy network path: ')
         value_path_1 = input('player1\'s value network path: ')
         try:
             model_player1 = PPOAgent(50, ACTION_SIZE, policy_path_1, value_path_1)
             model_player1.set_evaluation_mode()
-            success = True
+            SUCCESS = True
         except:
             print('please try again...')
 print('============================================')
@@ -79,14 +78,14 @@ while True:
         break
     print('input "A" or "B", lowercase is also acceptable')
 if player2 == 'ppo agent':
-    success = False
-    while not success:
+    SUCCESS = False
+    while not SUCCESS:
         policy_path_2 = input('player2\'s policy network path: ')
         value_path_2 = input('player2\'s value network path: ')
         try:
             model_player2 = PPOAgent(100, ACTION_SIZE, policy_path_2, value_path_2)
             model_player2.set_evaluation_mode()
-            success = True
+            SUCCESS = True
         except Exception as e:
             print(e)
             print('please try again...')

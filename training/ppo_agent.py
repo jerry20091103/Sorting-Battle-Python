@@ -3,8 +3,7 @@ This module contains PPO Agent for training.
 '''
 import numpy as np
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
 from torch.distributions import MultivariateNormal
 from neural_network import NeuralNetwork    #, PolicyNetwork, ValueNetwork
 from buffer import Buffer
@@ -18,6 +17,9 @@ UPDATE_NUM=2
 EPSILON=0.2
 
 class PPOAgent():
+    '''
+    This class contains PPO Agent.
+    '''
     def __init__(self, observation_dimension, action_dimension, policy_network='', value_network=''):
         """
         Constructor of PPO Agent

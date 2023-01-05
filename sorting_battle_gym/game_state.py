@@ -173,9 +173,9 @@ class GameState(ABC):
 
             # schedule the next callback
             self.push_task(action_delay, self.player_callback_task, player_id)
-        except AssertionError as e:
+        except AssertionError as error:
             # pause the game and show the error message
-            print("[ERROR] in player_callback_task:", e)
+            print("[ERROR] in player_callback_task:", error)
             # print action type and data
             print("action_type:", action_type, ", action_data:", action_data)
             input("The previous callback wiil be sent again. Press any key to continue...")

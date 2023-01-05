@@ -2,6 +2,9 @@
 This module contains Buffer for training.
 '''
 class Buffer():
+    '''
+    This is for network buffer.
+    '''
     def __init__(self):
         """
         Constructor of Buffer

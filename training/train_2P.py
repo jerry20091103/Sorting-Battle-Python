@@ -82,13 +82,13 @@ def player1_callback(game_state, to_print=False):
 #     return action_type, action_data
 
 # or load model
-model_folder = 'model/1_backup/'
-path_policy1 = model_folder + 'policy_10000.pt'
-path_value1 = model_folder + 'value_10000.pt'
+MODEL_FOLDER = 'model/1_backup/'
+PATH_POLICY1 = MODEL_FOLDER + 'policy_10000.pt'
+PATH_VALUE1 = MODEL_FOLDER + 'value_10000.pt'
 
-model_player1 = PPOAgent(100, ACTION_SIZE, path_policy1, path_value1) #, path_policy1, path_value1)
+model_player1 = PPOAgent(100, ACTION_SIZE, PATH_POLICY1, PATH_VALUE1) #, PATH_POLICY1, PATH_VALUE1)
 model_player1.set_training_mode()
-P1_win = 0
+P1_WIN = 0
 p1_win_rates = []
 latest_policy, latest_value = '', ''
 
@@ -118,22 +118,22 @@ for i in range(10000, 10000 + EPISODE_NUM):
     print(f"score of P1: {score1}")
     print(f"score of P2: {score2}")
     if player1_status == GameBoardState.Status.WIN or player2_status == GameBoardState.Status.LOSE:
-        P1_win += 1
+        P1_WIN += 1
         print('winner: P1')
     elif player2_status == GameBoardState.Status.WIN or player1_status == GameBoardState.Status.LOSE:
-        P1_win += 0
+        P1_WIN += 0
         print('winner: P2')
     else:
-        P1_win += 0.5
+        P1_WIN += 0.5
         print('draw .5-.5')
     print("=================================================")
     if i % TRAINING_STEP == (TRAINING_STEP - 1):
-        current_win_rate = P1_win/TRAINING_STEP
-        p1_win_rates.append(current_win_rate)
+        CURRENT_WIN_RATE = P1_WIN/TRAINING_STEP
+        p1_win_rates.append(CURRENT_WIN_RATE)
         print('win rate backup...')
         with open('train_win_rate.txt', 'w') as txt:
             print(p1_win_rates, file=txt)
-        print(f'step: {i + 1}/{10000 + EPISODE_NUM}, win rate: {current_win_rate} ({P1_win}/{TRAINING_STEP})')
+        print(f'step: {i + 1}/{10000 + EPISODE_NUM}, win rate: {CURRENT_WIN_RATE} ({P1_WIN}/{TRAINING_STEP})')
         print('model backup...')
         latest_policy = f'model/1_backup/policy_{i + 1}.pt'
         latest_value = f'model/1_backup/value_{i + 1}.pt'
@@ -143,4 +143,4 @@ for i in range(10000, 10000 + EPISODE_NUM):
                     'agent training win rate', f'image_backup/1_backup/win_rate_{i + 1}.jpg')
         # print(f'image_backup/zero/win_rate_{i + 1}.jpg')
         print('=================================================')
-        P1_win = 0
+        P1_WIN = 0

@@ -1,4 +1,4 @@
-1p_terminal_game: "GameBase()", with player_count=1
+terminal_game_1p: "GameBase()", with player_count=1
     GameBase(): "GameBoardState()", with game_board_config
         GameBoardState(): "GameGridState()", with some config
             GameGridState(): lots of "GameTileState()"
@@ -21,15 +21,15 @@
             GameState().init_tasks(): push push_new_row_task
             Endless1PGameState().init_tasks(): push load_task
             Endless1PGameState().init_tasks(): push player_callback_task
-1p_terminal_game: game_base.set_callback(player1_callback)
+terminal_game_1p: game_base.set_callback(player1_callback)
     GameBase.set_callback(): game_state.set_player_callback()
         Endless1PGameState().set_player_callback(): set player callback
-1p_terminal_game: run_game()
+terminal_game_1p: run_game()
     GameBase.run_game(): game_state.run_game()
         GameState().run_game(): run scheduler
 
 
-2p_terminal_game: "GameBase()", with player_count=2
+terminal_game_2p: "GameBase()", with player_count=2
     GameBase(): P1 "GameBoardState()", with game_board_config
         GameBoardState(): "GameGridState()", with some config
         GameBoardState(): "GameScoreState()", with some config
@@ -75,11 +75,11 @@
                 PlayerState(): game_board_state.game_score_state.set_score_increase_callback(self.attack)
             Endless2PGameState().register_player(): append PlayerState into player_states[]
 !!! now PlayerState of p2 is created and registered
-2p_terminal_game: 
+terminal_game_2p: 
 
-1p_terminal_game: game_base.set_callback(player1_callback)
+terminal_game_1p: game_base.set_callback(player1_callback)
     GameBase.set_callback(): game_state.set_player_callback()
         Endless1PGameState().set_player_callback(): set player callback
-1p_terminal_game: run_game()
+terminal_game_1p: run_game()
     GameBase.run_game(): game_state.run_game()
         GameState().run_game(): run scheduler

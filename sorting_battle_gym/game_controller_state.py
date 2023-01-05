@@ -1,3 +1,6 @@
+'''
+This module contains GameControllerState class.
+'''
 from sorting_battle_gym.select_handler import SelectHandler
 from sorting_battle_gym.swap_handler import SwapHandler
 

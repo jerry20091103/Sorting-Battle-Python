@@ -2,9 +2,8 @@
 This module for converting model to onnx file.
 '''
 import torch.onnx
-import onnx
 
-def Convert_ONNX(model_player, input_size = 50):
+def convert_onnx(model_player, input_size = 50):
     """
     Export model to onnx file
     :param model_player: model player (PPOAgent)
@@ -25,9 +24,9 @@ def Convert_ONNX(model_player, input_size = 50):
 # model_save_P1_name = 'training_model_2P_1_v0.pt'
 # path_P1 = f"/content/drive/Shareddrives/ML Final Project/Sorting-Battle-Python/training/model/{model_save_P1_name}"
 # model_player1 = torch.load(path_P1)
-# Convert_ONNX(model_player1)
+# convert_onnx(model_player1)
 
 # model_save_P2_name = 'training_model_2P_2_v0.pt'
 # path_P2 = f"/content/drive/Shareddrives/ML Final Project/Sorting-Battle-Python/training/model/{model_save_P2_name}"
 # model_player2 = torch.load(path_P2)
-# Convert_ONNX(model_player2)
+# convert_onnx(model_player2)

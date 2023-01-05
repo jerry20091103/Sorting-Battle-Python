@@ -50,7 +50,7 @@ def is_legal_action(action_type, action_data, game_state_grid):
     """
     Check if the action is legal
     :param action_type: swap, select
-    :param action_data: (x, y) or a list of (x, y)
+    :param action_data: (x_data, y) or a list of (x_data, y)
     :param game_state_grid: current board state
     :return: bool
     """
@@ -59,9 +59,9 @@ def is_legal_action(action_type, action_data, game_state_grid):
     try:
         if action_type == ACTION_SELECT:
             return game_board_state.game_controller_state.select(action_data)[0] > 0
-        elif action_type == ACTION_SWAP:
+        if action_type == ACTION_SWAP:
             return game_board_state.game_controller_state.swap(action_data)
-        elif action_type == ACTION_ADD:
+        if action_type == ACTION_ADD:
             return True
     except:
         return False
@@ -102,15 +102,15 @@ def select_act(action, grid, choose_legal=True):
 def plot_curve(plot_data, x_label, y_label, title='', filename=''):
     """
     :param plot_data: data to be plotted
-    :param x_label: x-axis name
+    :param x_label: x_data-axis name
     :param y_label: y-axis name
     :param title: title of image
     :param filename: default='' (only plot the image), otherwise, save the image as filename
     """
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    x = [i+1 for i in range(len(plot_data))]
-    plt.plot(x, plot_data, c='blue', label='train')
+    x_data = [i+1 for i in range(len(plot_data))]
+    plt.plot(x_data, plot_data, c='blue', label='train')
     plt.title(title)
     if filename:
         plt.savefig(filename)
